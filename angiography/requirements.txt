@@ -1,0 +1,7 @@
+solara
+wget
+pandas
+numpy
+matplotlib
+imageio
+shapely
