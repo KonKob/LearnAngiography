@@ -1,0 +1,18 @@
+# Cardio learn
+## Coronary artery catheterisation
+### ARCADE Dataset
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10390295.svg)](https://doi.org/10.5281/zenodo.10390295)
+
+Popov, M., Amanturdieva, A., Zhaksylyk, N. et al. Dataset for Automatic Region-based Coronary Artery Disease Diagnostics Using X-Ray Angiography Images. Sci Data 11, 20 (2024). https://doi.org/10.1038/s41597-023-02871-z
+
+Website Syntax Score: https://syntaxscore.org/index.php
+
+CC0 1.0 Universal license: https://creativecommons.org/publicdomain/zero/1.0/deed.de
+
+#### Data:
+    - 1500 images for syntax, of that the 1000 train images are being used (module 1, 2, 3), 1500 images for stenoses, of that the 1000 train images are being used (module 4)
+    - CAD suspected patients (Research Institute of Cardiology and Internal Diseases, Almaty, Kazakhstan), n patients = 1500, 0 to 2 images per view, 0 to 12 images per patient
+    - angiographs: Philips Azurion 3 (Philips, Amsterdam, Netherlands), Siemens Artis Zee (Siemens Medical Solutions, Erlangen, Germany)
+    - angulations:
+      - 4 views for left coronary artery: Left Anterior Oblique (LAO) and Right Anterior Oblique (RAO) caudal views, Postero-Anterior (PA) and RAO cranial views
+      - 2 views for right coronary artery: LAO and RAO cranial views
