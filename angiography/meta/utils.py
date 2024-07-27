@@ -18,7 +18,7 @@ def download_sample_data(destination_dir_path: str = "/content/", dataset_url = 
 def load_on_colab():
     destination_dir_path = download_sample_data()
 
-    arcade_path = Path(destination_dir_path).joinpath("arcade/"))
+    arcade_path = Path(destination_dir_path).joinpath("arcade/")
     syntax_path = arcade_path.joinpath("syntax/train/")
     syntax_images_path = syntax_path.joinpath("images/")
     stenosis_path = arcade_path.joinpath("stenosis/train/")
