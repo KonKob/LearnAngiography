@@ -1,4 +1,5 @@
 import solara
+from ..modules.modules import Module
 
 @solara.component
 def StartModule(key, module_dict, start_module=None):
