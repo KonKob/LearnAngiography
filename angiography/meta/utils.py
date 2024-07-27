@@ -42,7 +42,7 @@ def load_on_colab():
 
 def load_with_solara():
     # instead of download use local files
-    destination_dir_path = "/Users/kobel/Downloads/"
+    destination_dir_path = Path.cwd().parent
     
     arcade_path = Path(destination_dir_path).joinpath("arcade/")
     syntax_path = arcade_path.joinpath("syntax/train/")
