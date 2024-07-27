@@ -1,6 +1,6 @@
 import random
-from .stats.utils import adjust_to_stats
-from .modules.utils import show_annotations_over_image
+from ..stats.utils import adjust_to_stats
+from ..modules.utils import show_annotations_over_image
 from shapely.geometry import Polygon, Point
 
 class Syllable():

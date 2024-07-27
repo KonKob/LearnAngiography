@@ -1,5 +1,5 @@
 import solara
-from .module_widgget import StartModule
+from .module_widget import StartModule
 
 @solara.component
 def Page():

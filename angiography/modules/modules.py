@@ -1,4 +1,4 @@
-from .stats.utils import Score
+from ..stats.utils import Score
 
 class Module():
   def __init__(self, images_annotations, syllable, name, segment_definitions, user_stats = None, module_stats = None, n_syllables = 3, print=True):
