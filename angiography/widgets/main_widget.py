@@ -1,12 +1,6 @@
 import solara
 from .module_widget import StartModule
 
-@solara.component
-def Page(module_dict):
-  module_select = solara.reactive("Choose")
-  start_module = solara.reactive(None)
-  StartOrSelect(module_select, start_module, module_dict)
-
 
 @solara.component
 def StartOrSelect(module_select, start_module, module_dict):
