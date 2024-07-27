@@ -1,6 +1,5 @@
 import solara
 from ..modules.modules import Module
-from ..meta.segment_definitions import segment_definitions
 
 @solara.component
 def StartModule(key, module_dict, start_module=None):
