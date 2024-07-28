@@ -1,10 +1,10 @@
-import solara
-from angiography.meta.utils import load_data
-from angiography.widgets.main_widget import StartOrSelect
+from flask import Flask
+import solara.server.flask
+from solara_app import Page
 
-@solara.component
-def Page():
-    module_dict = load_data()
-    module_select = solara.reactive("Choose")
-    start_module = solara.reactive(None)
-    StartOrSelect(module_select, start_module, module_dict)
+app = Flask(__name__)
+app.register_blueprint(solara.server.flask.blueprint, url_prefix="/main/")
+
+@app.route("/")
+def load_page():
+    Page()

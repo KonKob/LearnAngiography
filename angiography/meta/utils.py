@@ -16,9 +16,12 @@ def download_sample_data(destination_dir_path: str, dataset_url = 'https://zenod
 
 
 def load_data():
-    destination_dir_path = download_sample_data(destination_dir_path=str(Path.cwd().parent))
-    
+    destination_dir_path = str(Path.cwd().parent)
     arcade_path = Path(destination_dir_path).joinpath("arcade/")
+
+    if not arcade_path.exists():
+        destination_dir_path = download_sample_data(destination_dir_path=destination_dir_path)
+    
     syntax_path = arcade_path.joinpath("syntax/train/")
     syntax_images_path = syntax_path.joinpath("images/")
     stenosis_path = arcade_path.joinpath("stenosis/train/")
