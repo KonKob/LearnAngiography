@@ -27,3 +27,12 @@ def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, 
     display(fig)
     plt.close()
     return segment_ids
+
+
+def show_points_over_image(image, point):
+    fig, ax = plt.subplots()
+    ax.imshow(iio.imread(image["file_path"]), cmap="Greys")
+    ax.scatter(point[0], point[1], s = 20)
+    display(fig)
+    plt.close()
+    return None

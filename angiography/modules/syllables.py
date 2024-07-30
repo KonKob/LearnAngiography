@@ -1,7 +1,9 @@
 import random
 from ..stats.utils import adjust_to_stats
-from ..modules.utils import show_annotations_over_image
+from ..modules.utils import show_annotations_over_image, show_points_over_image
 from shapely.geometry import Polygon, Point
+import solara
+import imageio.v3 as iio
 
 class Syllable():
   def __init__(self, images_annotations, segment_definitions, user_stats = None, module_stats = None, n_syllables = 3, print=True):
@@ -13,6 +15,7 @@ class Syllable():
     self.image = self.get_image(images_annotations)
     solution_options = self.get_options_and_solution()
     self.solution, self.options = solution_options["solution"], solution_options["options"]
+    self.solara_dict = self.create_solara_dict()
 
   def answer(self, answer):
     if not self.answered:
@@ -39,6 +42,11 @@ class ChooseArteryNameSyllable(Syllable):
   @property
   def k_possibilities(self):
     return 4
+  
+  def create_solara_dict(self):
+    return {"widgets": [solara.ToggleButtonsSingle],
+            "widget_options": [{"options": self.options}],
+            "answer_value": [solara.reactive(self.options[0])]}
 
   def get_image(self, images_annotations):
     image_id = random.sample(list(images_annotations.keys()), k=1)[0]
@@ -90,6 +98,11 @@ class RightOrLeftSyllable(Syllable):
   @property
   def right_segments(self):
     return ["1", "2", "3"]
+  
+  def create_solara_dict(self):
+    return {"widgets": [solara.ToggleButtonsSingle],
+            "widget_options": [{"options": self.options}],
+            "answer_value": [solara.reactive(self.options[0])]}
 
   def get_image(self, images_annotations):
     while True:
@@ -126,6 +139,10 @@ class RightOrLeftSyllable(Syllable):
 
 
 class ChooseArteryBoxSyllable(Syllable):
+  def create_solara_dict(self):
+    return {"widgets": [solara.ToggleButtonsSingle],
+            "widget_options": [{"options": self.options}],
+            "answer_value": [solara.reactive(self.options[0])]}
 
   def get_image(self, images_annotations):
     image_id = random.sample(list(images_annotations.keys()), k=1)[0]
@@ -145,7 +162,7 @@ class ChooseArteryBoxSyllable(Syllable):
 
   def get_options(self):
     self.options_dict = {segment_id : str(i) for i, segment_id in enumerate(self.image["annotations"])}
-    return self.options_dict.values()
+    return list(self.options_dict.values())
 
   def check_answer(self, answer):
     return answer == self.solution
@@ -158,13 +175,18 @@ class FindStenosisSyllable(Syllable):
   @property
   def px_soft(self):
     return 10
+  
+  def create_solara_dict(self):
+    return {"widgets": [solara.SliderFloat, solara.SliderFloat],
+            "widget_options": [{"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]}],
+            "answer_value": [self.point[0], self.point[1]]}
 
   def get_image(self, images_annotations):
     image_id = random.sample(list(images_annotations.keys()), k=1)[0]
     return images_annotations[image_id]
 
   def view_func(self):
-    show_annotations_over_image(self.image, [])
+    show_points_over_image(self.image, [self.point[0].value, self.point[1].value])
 
   def get_options_and_solution(self):
     return {"options": self.get_options(), "solution": self.get_solution()}
@@ -179,6 +201,7 @@ class FindStenosisSyllable(Syllable):
 
   def get_options(self):
     self.task_description = "Find the stenosis in the image!"
+    self.point = [solara.reactive(0), solara.reactive(0)]
     return []
 
   def check_answer(self, answer):
