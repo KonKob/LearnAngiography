@@ -3,21 +3,23 @@ from ..modules.modules import Module
 from ..meta.segment_definitions import segment_definitions
 
 @solara.component
-def StartModule(key, module_dict, start_module=None):
+def StartModule(key, module_dict, start_module=None, n_syllables=3):
     m = Module(images_annotations = module_dict[key]["images"],
           syllable = module_dict[key]["syllable"],
           name = key,
           segment_definitions = segment_definitions,
           user_stats = None,
           module_stats = None,
-          print = False)
+          print = False,
+          n_syllables=n_syllables)
     ex_syll = solara.reactive(-1)
-    View(m, ex_syll, start_module)
+    View(m, ex_syll, start_module, n_syllables)
 
 
 @solara.component
 def LandingPage(m, ex_syll):
   solara.Text(f"{m.module_name} with {m.n_syllables} tasks")
+  
   def start():
     ex_syll.value += 1
   solara.Button("Start", on_click=start)
