@@ -138,39 +138,6 @@ class RightOrLeftSyllable(Syllable):
     assert answer in self.options, f"Your answer has to be one of {self.options}!"
 
 
-class ChooseArteryBoxSyllable(Syllable):
-  def create_solara_dict(self):
-    return {"widgets": [solara.ToggleButtonsSingle],
-            "widget_options": [{"options": self.options}],
-            "answer_value": [solara.reactive(self.options[0])]}
-
-  def get_image(self, images_annotations):
-    image_id = random.sample(list(images_annotations.keys()), k=1)[0]
-    return images_annotations[image_id]
-
-  def view_func(self):
-    show_annotations_over_image(self.image, "all", show_name=False, show_alias=True)
-
-  def get_options_and_solution(self):
-    return {"options": self.get_options(), "solution": self.get_solution()}
-
-  def get_solution(self):
-    solution_key = adjust_to_stats(list(self.options_dict.keys()), user_stats = self.user_stats, module_stats = self.module_stats, k=1)[0]
-    artery_to_find = self.segment_definitions.loc[self.segment_definitions["segment_id"]==solution_key, "segment_name"].values[0]
-    self.task_description = f"Find {artery_to_find} in the image!"
-    return self.options_dict[solution_key]
-
-  def get_options(self):
-    self.options_dict = {segment_id : str(i) for i, segment_id in enumerate(self.image["annotations"])}
-    return list(self.options_dict.values())
-
-  def check_answer(self, answer):
-    return answer == self.solution
-
-  def assert_answer(self, answer):
-    assert answer in self.options, f"Your answer has to be one of {self.options}!"
-
-
 class FindStenosisSyllable(Syllable):
   @property
   def px_soft(self):
@@ -201,6 +168,49 @@ class FindStenosisSyllable(Syllable):
 
   def get_options(self):
     self.task_description = "Find the stenosis in the image!"
+    self.point = [solara.reactive(0), solara.reactive(0)]
+    return []
+
+  def check_answer(self, answer):
+    return self.solution_polygon.distance(Point(answer[0], answer[1])) < self.px_soft
+
+  def assert_answer(self, answer):
+    assert len(answer) == 2, ""
+
+
+class ChooseArteryBoxSyllable(Syllable):
+  @property
+  def px_soft(self):
+    return 10
+  
+  def create_solara_dict(self):
+    return {"widgets": [solara.SliderFloat, solara.SliderFloat],
+            "widget_options": [{"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]}],
+            "answer_value": [self.point[0], self.point[1]]}
+
+  def get_image(self, images_annotations):
+    image_id = random.sample(list(images_annotations.keys()), k=1)[0]
+    return images_annotations[image_id]
+
+  def view_func(self):
+    show_points_over_image(self.image, [self.point[0].value, self.point[1].value])
+
+  def get_options_and_solution(self):
+    return {"options": self.get_options(), "solution": self.get_solution()}
+
+  def get_solution(self):
+    solution_key = adjust_to_stats(list(self.options_dict.keys()), user_stats = self.user_stats, module_stats = self.module_stats, k=1)[0]
+    artery_to_find = self.segment_definitions.loc[self.segment_definitions["segment_id"]==solution_key, "segment_name"].values[0]
+    self.task_description = f"Find {artery_to_find} in the image!"
+    segmentation = self.image["annotations"][solution_key]["segmentation"][0]
+    x = segmentation[::2]
+    y = segmentation[1::2]
+    coords = [[xi, yi] for xi, yi in zip(x, y)]
+    self.solution_polygon = Polygon(coords)
+    return solution_key
+
+  def get_options(self):
+    self.options_dict = {segment_id : str(i) for i, segment_id in enumerate(self.image["annotations"])}
     self.point = [solara.reactive(0), solara.reactive(0)]
     return []
 
