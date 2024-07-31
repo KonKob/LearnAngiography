@@ -44,9 +44,9 @@ class ChooseArteryNameSyllable(Syllable):
     return 4
   
   def create_solara_dict(self):
-    return {"widgets": [solara.ToggleButtonsSingle],
-            "widget_options": [{"options": self.options}],
-            "answer_value": [solara.reactive(self.options[0])]}
+    return {"widgets": [solara.ToggleButtonsSingle, solara.VBox],
+            "widget_options": [{"options": self.options}, {"text": [solara.Text for i in range(len(self.options))], "values": [f"i) {option} " for i, option in enumerate(self.options)], "tooltips": [solara.Tooltip for i in range(len(self.options))], "tooltip_descriptions": [self.segment_definitions.loc[self.segment_definitions["segment_id"]==id, "segment_description"].values[0] for id in self.all_segment_ids]}],
+            "answer_value": [solara.reactive(self.options[0]), None]}
 
   def get_image(self, images_annotations):
     image_id = random.sample(list(images_annotations.keys()), k=1)[0]
@@ -64,12 +64,12 @@ class ChooseArteryNameSyllable(Syllable):
     segment_ids_without_correct = list(self.image["annotations"].keys())
     segment_ids_without_correct.remove(self.solution_id)
     if len(segment_ids_without_correct) >= self.k_possibilities - 1:
-      wrong_segment_ids = random.sample(segment_ids_without_correct, k=self.k_possibilities - 1)
+      self.all_segment_ids = random.sample(segment_ids_without_correct, k=self.k_possibilities - 1)
     else:
-      wrong_segment_ids = segment_ids_without_correct
-    wrong_segment_ids.append(self.solution_id)
-    random.shuffle(wrong_segment_ids)
-    ids_names_explanations = [self.get_ids_names_explanations(id) for id in wrong_segment_ids]
+      self.all_segment_ids = segment_ids_without_correct
+    self.all_segment_ids.append(self.solution_id)
+    random.shuffle(self.all_segment_ids)
+    ids_names_explanations = [self.get_ids_names_explanations(id) for id in self.all_segment_ids]
     self.task_description = "Enter the name of the selected artery!"
     return ids_names_explanations
 
@@ -185,9 +185,9 @@ class ChooseArteryBoxSyllable(Syllable):
     return 10
   
   def create_solara_dict(self):
-    return {"widgets": [solara.SliderFloat, solara.SliderFloat],
-            "widget_options": [{"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]}],
-            "answer_value": [self.point[0], self.point[1]]}
+    return {"widgets": [solara.Tooltip, solara.SliderFloat, solara.SliderFloat],
+            "widget_options": [{"tooltip": self.segment_definitions.loc[self.segment_definitions["segment_id"]==self.solution_key, "segment_description"].values[0], "widget_within": solara.Text, "widget_within_label": "description", "widget_within_style": {"outline-style": "solid"}}, {"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]}],
+            "answer_value": [None, self.point[0], self.point[1]]}
 
   def get_image(self, images_annotations):
     image_id = random.sample(list(images_annotations.keys()), k=1)[0]
@@ -200,15 +200,15 @@ class ChooseArteryBoxSyllable(Syllable):
     return {"options": self.get_options(), "solution": self.get_solution()}
 
   def get_solution(self):
-    solution_key = adjust_to_stats(list(self.options_dict.keys()), user_stats = self.user_stats, module_stats = self.module_stats, k=1)[0]
-    artery_to_find = self.segment_definitions.loc[self.segment_definitions["segment_id"]==solution_key, "segment_name"].values[0]
+    self.solution_key = adjust_to_stats(list(self.options_dict.keys()), user_stats = self.user_stats, module_stats = self.module_stats, k=1)[0]
+    artery_to_find = self.segment_definitions.loc[self.segment_definitions["segment_id"]==self.solution_key, "segment_name"].values[0]
     self.task_description = f"Find {artery_to_find} in the image!"
-    segmentation = self.image["annotations"][solution_key]["segmentation"][0]
+    segmentation = self.image["annotations"][self.solution_key]["segmentation"][0]
     x = segmentation[::2]
     y = segmentation[1::2]
     coords = [[xi, yi] for xi, yi in zip(x, y)]
     self.solution_polygon = Polygon(coords)
-    return solution_key
+    return self.solution_key
 
   def get_options(self):
     self.options_dict = {segment_id : str(i) for i, segment_id in enumerate(self.image["annotations"])}

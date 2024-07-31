@@ -31,6 +31,11 @@ def create_widgets(options, widget, value):
   func(options, widget, value)
 
 @solara.component
+def create_tooltip(options, widget, value):
+  with widget(options["tooltip"]):
+    options["widget_within"](options["widget_within_label"], style=options["widget_within_style"])
+
+@solara.component
 def create_text_widget(options, widget, value):
   widget(label=options["label"], value=options["value"])
 
@@ -39,12 +44,21 @@ def create_toggle_buttons_single(options, widget, value):
   widget(value=value, values=options["options"])
 
 @solara.component
+def create_vboxes(options, widget, value):
+  with widget():
+    for text, value, tooltip, tooltip_description in zip(options["text"], options["values"], options["tooltips"], options["tooltip_descriptions"]):
+      with tooltip(tooltip_description):
+        text(value)
+
+@solara.component
 def create_float_slider(options, widget, value):
   widget(label=options["label"], value=value, min=options["min"], max=options["max"])
 
 widget_select_dict = {'react.component(solara.components.misc.Text)': create_text_widget,
                       'react.component(solara.components.togglebuttons.ToggleButtonsSingle)': create_toggle_buttons_single,
-                      'react.component(solara.components.slider.SliderFloat)': create_float_slider}
+                      'react.component(solara.components.slider.SliderFloat)': create_float_slider,
+                      'react.component(solara.components.tooltip.Tooltip)': create_tooltip,
+                      'react.component(solara.components.misc.VBox)': create_vboxes}
 
 @solara.component
 def ModulePage(m, ex_syll, n_syllables):

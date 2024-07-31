@@ -18,7 +18,7 @@ def get_landing_pages(m):
         {m.n_syllables} items were selected.
 
         ## Artery definitions 
-        If you need a description, how the artery segment is defined, hover over the i) button!
+        If you need a description, how the artery segment is defined, hover over the __description__ text field!
 
         """,
 
@@ -29,7 +29,7 @@ def get_landing_pages(m):
         {m.n_syllables} items were selected.
 
         ## Artery definitions 
-        If you need a description, how the artery segment is defined, hover over the i) button next to the artery name button!
+        If you need a description, how the artery segment is defined, hover over the __i) artery name__ button!
 
         
         """,
