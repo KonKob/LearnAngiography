@@ -2,6 +2,39 @@ import solara
 from ..modules.modules import Module
 from ..meta.segment_definitions import segment_definitions
 from ..meta.module_pages import get_landing_pages
+from ..meta.utils import load_data
+
+
+@solara.component
+def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive):
+  if start_module.value is None:
+    SelectModule(module_select, start_module, module_dict, n_syllables_reactive)
+  else:
+    StartModule(start_module.value, module_dict, start_module, n_syllables_reactive.value)
+
+
+@solara.component
+def SelectModule(module_select, start_module, module_dict, n_syllables_reactive):
+  def on_start_click():
+    if module_select.value != "Choose":
+      start_module.value = module_select.value
+  solara.Select(
+      label="Select module", 
+      values=["Choose"] + list(module_dict.keys()), 
+      value=module_select
+  )
+  solara.SliderInt("Choose number of items", value=n_syllables_reactive, min=1, max=20)
+  solara.InputInt(f"Number of items: ", value=n_syllables_reactive)
+  solara.Button("Start", on_click=on_start_click)
+
+
+@solara.component
+def Page():
+    module_dict = load_data()
+    module_select = solara.reactive("Choose")
+    start_module = solara.reactive(None)
+    n_syllables_reactive = solara.reactive(3)
+    StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive)
 
 @solara.component
 def StartModule(key, module_dict, start_module=None, n_syllables=3):
@@ -16,14 +49,15 @@ def StartModule(key, module_dict, start_module=None, n_syllables=3):
     ex_syll = solara.reactive(-1)
     View(m, ex_syll, start_module, n_syllables)
 
-
 @solara.component
-def LandingPage(m, ex_syll):
+def LandingPage(m, ex_syll, start_module):
   solara.Markdown(get_landing_pages(m))
-
   def start():
     ex_syll.value += 1
   solara.Button("Start", on_click=start)
+  def return_to_main():
+    start_module.value = None
+  solara.Button("Back to main menu", on_click=return_to_main)
 
 @solara.component
 def create_widgets(options, widget, value):  
@@ -99,9 +133,9 @@ def ResultsPage(m, start_module=None):
 
 
 @solara.component
-def View(m, ex_syll, start_module = None, n_syllables=3):
+def View(m, ex_syll, start_module, n_syllables=3):
   if ex_syll.value == -1:
-    LandingPage(m, ex_syll)
+    LandingPage(m, ex_syll, start_module)
   elif ex_syll.value >= 0 and ex_syll.value < n_syllables:
     ModulePage(m, ex_syll, n_syllables)
   elif ex_syll.value == n_syllables:

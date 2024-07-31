@@ -1,5 +1,5 @@
 import solara
-from angiography.widgets.main_widget import Page as p
+from angiography.widgets.widgets import Page as p
 
 @solara.component
 def Page():
