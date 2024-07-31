@@ -6,6 +6,15 @@ from ..meta.utils import load_data
 
 
 @solara.component
+def Page():
+    with solara.lab.Tabs():
+        with solara.lab.Tab("main"):
+            MainPage()
+        with solara.lab.Tab("about"):
+            MetaPage()
+
+
+@solara.component
 def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive):
   if start_module.value is None:
     SelectModule(module_select, start_module, module_dict, n_syllables_reactive)
@@ -29,7 +38,7 @@ def SelectModule(module_select, start_module, module_dict, n_syllables_reactive)
 
 
 @solara.component
-def Page():
+def MainPage():
     module_dict = load_data()
     module_select = solara.reactive("Choose")
     start_module = solara.reactive(None)
@@ -140,3 +149,25 @@ def View(m, ex_syll, start_module, n_syllables=3):
     ModulePage(m, ex_syll, n_syllables)
   elif ex_syll.value == n_syllables:
     ResultsPage(m, start_module)
+
+
+@solara.component
+def MetaPage():
+  solara.Markdown(r"""
+  ## About
+  This application is meant for learning purposes. It is based on the data and annotations of the publicly available [ARCADE Dataset](https://zenodo.org/badge/DOI/10.5281/zenodo.10390295.svg) published in 2024 [[1]](https://doi.org/10.1038/s41597-023-02871-z)). 
+
+  
+  ## Data
+  The dataset targets the two purposes syntax and stenosis detection with 1500 images each. 1000 training images of each category are used in this application. 
+  
+  The data was acquired from 1500 patients with clinical suspicion of coronary heart disease from the Research Institute of Cardiology and Internal Diseases in Almaty (Kazakhstan). 
+  
+  0 to 2 images per each of the six different angulations were recorded per patient resulting in 0 to 12 images per patient in the final dataset. Two different angiographs were used for acquisitation: Philips Azurion 3 (Philips, Amsterdam, Netherlands) and Siemens Artis Zee (Siemens Medical Solutions, Erlangen, Germany). 
+                  
+  The different angulations contain 4 views for the left coronary artery (Left Anterior Oblique (LAO) and Right Anterior Oblique (RAO) caudal views, Postero-Anterior (PA) and RAO cranial views) and 2 views for the right coronary artery (LAO and RAO cranial views).
+
+
+  ## References
+
+  [1] Popov, M., Amanturdieva, A., Zhaksylyk, N. et al. Dataset for Automatic Region-based Coronary Artery Disease Diagnostics Using X-Ray Angiography Images. Sci Data 11, 20 (2024).""")
