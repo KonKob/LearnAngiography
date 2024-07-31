@@ -74,10 +74,11 @@ class ChooseArteryNameSyllable(Syllable):
     return ids_names_explanations
 
   def get_ids_names_explanations(self, id):
+    syntax_id = self.segment_definitions.loc[self.segment_definitions["segment_id"]==id, "segment_alphanumeric"].values[0]
     name = self.segment_definitions.loc[self.segment_definitions["segment_id"]==id, "segment_name"].values[0]
     explanation = self.segment_definitions.loc[self.segment_definitions["segment_id"]==id, "segment_description"].values[0]
     #return f"{id}\n{name}\n{explanation}"
-    return f"{id} {name}"
+    return f"{syntax_id} {name}"
 
   def view_func(self):
     show_annotations_over_image(self.image, segment_ids=self.solution_id, show_name = False)

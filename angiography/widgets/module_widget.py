@@ -1,6 +1,7 @@
 import solara
 from ..modules.modules import Module
 from ..meta.segment_definitions import segment_definitions
+from ..meta.module_pages import get_landing_pages
 
 @solara.component
 def StartModule(key, module_dict, start_module=None, n_syllables=3):
@@ -18,8 +19,8 @@ def StartModule(key, module_dict, start_module=None, n_syllables=3):
 
 @solara.component
 def LandingPage(m, ex_syll):
-  solara.Text(f"{m.module_name} with {m.n_syllables} tasks")
-  
+  solara.Markdown(get_landing_pages(m))
+
   def start():
     ex_syll.value += 1
   solara.Button("Start", on_click=start)
