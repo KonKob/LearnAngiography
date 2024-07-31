@@ -1,6 +1,6 @@
 import solara
 from ..modules.modules import Module
-from ..meta.segment_definitions import segment_definitions
+from ..meta.segment_definitions import segment_definitions, segment_definitions_markdown
 from ..meta.module_pages import get_landing_pages
 from ..meta.utils import load_data
 
@@ -12,6 +12,8 @@ def Page():
             MainPage()
         with solara.lab.Tab("about"):
             MetaPage()
+        with solara.lab.Tab("syntax"):
+            SyntaxPage()
 
 
 @solara.component
@@ -171,3 +173,7 @@ def MetaPage():
   ## References
 
   [1] Popov, M., Amanturdieva, A., Zhaksylyk, N. et al. Dataset for Automatic Region-based Coronary Artery Disease Diagnostics Using X-Ray Angiography Images. Sci Data 11, 20 (2024).""")
+
+@solara.component
+def SyntaxPage():
+  solara.Markdown(segment_definitions_markdown)
