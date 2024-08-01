@@ -17,15 +17,15 @@ def Page():
 
 
 @solara.component
-def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive):
+def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive, use_full_names):
   if start_module.value is None:
-    SelectModule(module_select, start_module, module_dict, n_syllables_reactive)
+    SelectModule(module_select, start_module, module_dict, n_syllables_reactive, use_full_names)
   else:
-    StartModule(start_module.value, module_dict, start_module, n_syllables_reactive.value)
+    StartModule(start_module.value, module_dict, start_module, n_syllables_reactive.value, use_full_names.value)
 
 
 @solara.component
-def SelectModule(module_select, start_module, module_dict, n_syllables_reactive):
+def SelectModule(module_select, start_module, module_dict, n_syllables_reactive, use_full_names):
   def on_start_click():
     if module_select.value != "Choose":
       start_module.value = module_select.value
@@ -34,10 +34,13 @@ def SelectModule(module_select, start_module, module_dict, n_syllables_reactive)
       values=["Choose"] + list(module_dict.keys()), 
       value=module_select
   )
-  solara.SliderInt("Choose number of items", value=n_syllables_reactive, min=1, max=20)
+  min = 1
+  max = 20
+  solara.Switch(label="Use syntax scores instead of full name", value=use_full_names, disabled=module_select.value not in ["ChooseArteryName", "ChooseArteryBox"])
+  solara.SliderInt(f"Choose number of items (range {min} to {max})", value=n_syllables_reactive, min=min, max=max)
   solara.InputInt(f"Number of items: ", value=n_syllables_reactive)
   solara.Button("Start", on_click=on_start_click)
-
+  
 
 @solara.component
 def MainPage():
@@ -45,10 +48,11 @@ def MainPage():
     module_select = solara.reactive("Choose")
     start_module = solara.reactive(None)
     n_syllables_reactive = solara.reactive(3)
-    StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive)
+    use_full_names = solara.reactive(True)
+    StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive, use_full_names)
 
 @solara.component
-def StartModule(key, module_dict, start_module=None, n_syllables=3):
+def StartModule(key, module_dict, start_module=None, n_syllables=3, use_full_names=True):
     m = Module(images_annotations = module_dict[key]["images"],
           syllable = module_dict[key]["syllable"],
           name = key,
@@ -56,7 +60,8 @@ def StartModule(key, module_dict, start_module=None, n_syllables=3):
           user_stats = None,
           module_stats = None,
           print = False,
-          n_syllables=n_syllables)
+          n_syllables=n_syllables,
+          use_full_names = use_full_names)
     ex_syll = solara.reactive(-1)
     View(m, ex_syll, start_module, n_syllables)
 
@@ -111,7 +116,6 @@ def ModulePage(m, ex_syll, n_syllables):
   solara.Text(f"{ex_syll.value+1}/{n_syllables}")
   m.syllables[m.executed_syllables].start()
   solara.Text(m.syllables[m.executed_syllables].task_description)
-
   solara_dict = m.syllables[m.executed_syllables].solara_dict 
   answer_list = []
   for i, widget in enumerate(solara_dict["widgets"]):
@@ -123,11 +127,9 @@ def ModulePage(m, ex_syll, n_syllables):
     answer = answer_list[0]
   else:
     answer = answer_list
-  
   def next():
     m.answer(answer)
     ex_syll.value += 1 
-
   solara.Button("Next", on_click=next)
 
 

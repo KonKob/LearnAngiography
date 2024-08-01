@@ -109,6 +109,10 @@ segment_definitions = pd.DataFrame(segment_definitions_dict)
 
 
 segment_definitions_markdown = """      
+
+        ## The module questions rely on the definitions taken from syntax score.
+        [https://syntaxscore.org/index.php/tutorial/definitions](https://syntaxscore.org/index.php/tutorial/definitions)
+
         |syntax score|name|description|
         |:---|:---|:---|
         | RCA proximal | From ostium to one half the distance to the acute margin of the heart. |

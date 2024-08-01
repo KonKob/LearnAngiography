@@ -1,12 +1,12 @@
 from ..stats.utils import Score
 
 class Module():
-  def __init__(self, images_annotations, syllable, name, segment_definitions, user_stats = None, module_stats = None, n_syllables = 3, print=True):
+  def __init__(self, images_annotations, syllable, name, segment_definitions, user_stats = None, module_stats = None, n_syllables = 3, use_full_names = True, print=True):
     self.module_name = name
     self.user_stats = user_stats
     self.n_syllables = n_syllables
     self.module_stats = module_stats
-    self.syllables = [syllable(images_annotations, segment_definitions, self.get_user_stats_dict(user_stats), self.get_module_stats_dict(module_stats), print=print)for i in range(self.n_syllables)]
+    self.syllables = [syllable(images_annotations, segment_definitions, self.get_user_stats_dict(user_stats), self.get_module_stats_dict(module_stats), print=print, use_full_names=use_full_names) for i in range(self.n_syllables)]
     self.executed_syllables = 0
     self.print=print
 
