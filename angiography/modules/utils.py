@@ -1,10 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import imageio.v3 as iio
+from ..meta.segment_definitions import segment_definitions
 
-def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, show_alias: bool=False):
-    fig, ax = plt.subplots()
+def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, show_alias: bool=False, colors={}, point=None, size=(7, 4)):
+    fig, ax = plt.subplots(figsize=size)
     ax.imshow(iio.imread(image["file_path"]), cmap="Greys")
+    if point is not None:
+        if "point" in colors:
+            color = colors["point"]
+        else:
+            color = "magenta"
+        ax.scatter(point[0], point[1], s = (size[0]*size[1])*1.5, color=color)
     for i, annotation in enumerate(image["annotations"].values()):
         segment_category = str(annotation["category_id"])
         if segment_ids != "all":
@@ -19,20 +26,15 @@ def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, 
         segmentation = annotation["segmentation"][0]
         x = segmentation[::2]
         y = segmentation[1::2]
-        ax.plot(x, y, color='blue')
+        if segment_category in colors:
+            color = colors[segment_category]
+        else:
+            color = "blue"
+        ax.plot(x, y, color=color)
         if show_name:
-          ax.text(np.mean(x), np.mean(y), segment_definitions.loc[segment_definitions["segment_id"]==segment_category, "segment_name"].values[0])
+          ax.text(np.mean(x), np.mean(y), segment_definitions.loc[segment_definitions["segment_id"]==segment_category, "segment_name"].values[0], color="white")
         if show_alias:
-          ax.text(np.mean(x), np.mean(y), i, color="blue", fontsize=20)
+          ax.text(np.mean(x), np.mean(y), i, color="white", fontsize=(size[0]*size[1])/2)
     display(fig)
     plt.close()
     return segment_ids
-
-
-def show_points_over_image(image, point):
-    fig, ax = plt.subplots()
-    ax.imshow(iio.imread(image["file_path"]), cmap="Greys")
-    ax.scatter(point[0], point[1], s = 20)
-    display(fig)
-    plt.close()
-    return None

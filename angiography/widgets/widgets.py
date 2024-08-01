@@ -143,6 +143,14 @@ def ResultsPage(m, start_module=None):
     def back_to_menu():
       start_module.value = None
     solara.Button("Back to main menu", on_click=back_to_menu)
+  with solara.Column(gap="20px"):
+    for syllable in m.syllables:
+      with solara.Row(gap="10px"):
+        syllable.result()
+        with solara.Column(gap="5px"):
+          solara.Text(syllable.task_description)
+          solara.Text(f"Your answer: {syllable.result_answer}")
+          solara.Text(f"Correct answer: {syllable.result_solution}")
 
 
 @solara.component

@@ -1,6 +1,6 @@
 import random
 from ..stats.utils import adjust_to_stats
-from ..modules.utils import show_annotations_over_image, show_points_over_image
+from ..modules.utils import show_annotations_over_image
 from shapely.geometry import Polygon, Point
 import solara
 import imageio.v3 as iio
@@ -18,17 +18,22 @@ class Syllable():
     self.solara_dict = self.create_solara_dict()
 
   def answer(self, answer):
+    self.answer = answer
     if not self.answered:
-      self.assert_answer(answer)
+      self.assert_answer(self.answer)
       self.answered = True
-      if self.check_answer(answer):
+      if self.check_answer(self.answer):
         self.score = 1
-        if self.print:
-          print(f"Congratulation, your answer {answer} is correct!")
       else:
-        if self.print:
-          print(f"{answer} is not the correct answer!")
         self.score = 0
+
+  def result(self):
+    self.create_solution()
+    if self.print:
+      if self.score:
+        print(f"Congratulation, your answer {self.result_answer} is correct!")
+      else:
+        print(f"{self.result_answer} is not the correct answer!")
 
   def start(self):
     self.view_func()
@@ -47,6 +52,19 @@ class ChooseArteryNameSyllable(Syllable):
     return {"widgets": [solara.ToggleButtonsSingle, solara.VBox],
             "widget_options": [{"options": self.options}, {"text": [solara.Text for i in range(len(self.options))], "values": [f"i) {option} " for i, option in enumerate(self.options)], "tooltips": [solara.Tooltip for i in range(len(self.options))], "tooltip_descriptions": [self.get_ids_names_explanations(id, ["segment_description"]) for id in self.all_segment_ids]}],
             "answer_value": [solara.reactive(self.options[0]), None]}
+  
+  def create_solution(self):
+    answer_index = self.options.index(self.answer)
+    answer_id = self.all_segment_ids[answer_index]
+    self.result_answer = self.answer
+    self.result_solution = self.solution
+    if self.score:
+      segment_ids = [self.solution_id]
+      colors = {self.solution_id: "green"}
+    else:
+      segment_ids = [self.solution_id, answer_id]
+      colors = {self.solution_id:"yellow", answer_id: "red"}
+    show_annotations_over_image(self.image, segment_ids=segment_ids, show_name = True, colors=colors, size=(3, 1))
 
   def get_image(self, images_annotations):
     image_id = random.sample(list(images_annotations.keys()), k=1)[0]
@@ -107,6 +125,19 @@ class RightOrLeftSyllable(Syllable):
     return {"widgets": [solara.ToggleButtonsSingle],
             "widget_options": [{"options": self.options}],
             "answer_value": [solara.reactive(self.options[0])]}
+  
+  def create_solution(self):
+    self.result_answer = self.answer
+    self.result_solution = self.solution
+    if self.solution=="right":
+      segment_ids = self.right_segments
+    else:
+      segment_ids = self.left_segments
+    if self.score:
+      colors = {id:"green" for id in segment_ids}
+    else:
+      colors = {id:"red" for id in segment_ids}
+    show_annotations_over_image(self.image, segment_ids=segment_ids, show_name = True, colors=colors, size=(4, 2))
 
   def get_image(self, images_annotations):
     while True:
@@ -152,12 +183,21 @@ class FindStenosisSyllable(Syllable):
             "widget_options": [{"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]}],
             "answer_value": [self.point[0], self.point[1]]}
 
+  def create_solution(self):
+    self.result_answer = self.answer
+    self.result_solution = f"Your answer is {round(self.distance, 1)}px far from the solution!\nA distance of <{self.px_soft}px is considered as correct."
+    if self.score:
+      colors = {"point": "green", self.solution: "yellow"}
+    else:
+      colors = {"point": "red", self.solution: "yellow"}
+    show_annotations_over_image(self.image, segment_ids=self.solution, point=[self.point[0].value, self.point[1].value], colors=colors, show_name=False, size=(3, 1))
+
   def get_image(self, images_annotations):
     image_id = random.sample(list(images_annotations.keys()), k=1)[0]
     return images_annotations[image_id]
 
   def view_func(self):
-    show_points_over_image(self.image, [self.point[0].value, self.point[1].value])
+    show_annotations_over_image(self.image, segment_ids = [], point=[self.point[0].value, self.point[1].value], colors={"point": "magenta"})
 
   def get_options_and_solution(self, use_full_names):
     return {"options": self.get_options(), "solution": self.get_solution()}
@@ -176,7 +216,8 @@ class FindStenosisSyllable(Syllable):
     return []
 
   def check_answer(self, answer):
-    return self.solution_polygon.distance(Point(answer[0], answer[1])) < self.px_soft
+    self.distance = self.solution_polygon.distance(Point(answer[0], answer[1]))
+    return self.distance < self.px_soft
 
   def assert_answer(self, answer):
     assert len(answer) == 2, ""
@@ -191,13 +232,22 @@ class ChooseArteryBoxSyllable(Syllable):
     return {"widgets": [solara.Tooltip, solara.SliderFloat, solara.SliderFloat],
             "widget_options": [{"tooltip": self.get_ids_names_explanations(self.solution_key, ["segment_description"]), "widget_within": solara.Text, "widget_within_label": "description", "widget_within_style": {"outline-style": "solid"}}, {"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]}],
             "answer_value": [None, self.point[0], self.point[1]]}
+  
+  def create_solution(self):
+    self.result_answer = self.answer
+    self.result_solution = f"Your answer is {round(self.distance, 1)}px far from the solution!\nA distance of <{self.px_soft}px is considered as correct."
+    if self.score:
+      colors = {"point": "green", self.solution: "yellow"}
+    else:
+      colors = {"point": "red", self.solution: "yellow"}
+    show_annotations_over_image(self.image, segment_ids=self.solution, point=[self.point[0].value, self.point[1].value], colors=colors, show_name=False, size=(3, 1))
 
   def get_image(self, images_annotations):
     image_id = random.sample(list(images_annotations.keys()), k=1)[0]
     return images_annotations[image_id]
 
   def view_func(self):
-    show_points_over_image(self.image, [self.point[0].value, self.point[1].value])
+    show_annotations_over_image(self.image, segment_ids = [], point=[self.point[0].value, self.point[1].value], colors={"point": "magenta"})
 
   def get_options_and_solution(self, use_full_names):
     if use_full_names: 
@@ -230,7 +280,8 @@ class ChooseArteryBoxSyllable(Syllable):
     return []
 
   def check_answer(self, answer):
-    return self.solution_polygon.distance(Point(answer[0], answer[1])) < self.px_soft
+    self.distance = self.solution_polygon.distance(Point(answer[0], answer[1]))
+    return self.distance < self.px_soft
 
   def assert_answer(self, answer):
     assert len(answer) == 2, ""
