@@ -1,19 +1,19 @@
 import random
 from ..stats.utils import adjust_to_stats
-from ..modules.utils import show_annotations_over_image
+from ..modules.utils import show_annotations_over_image, get_ids_names_explanations, get_image
 from shapely.geometry import Polygon, Point
 import solara
 import imageio.v3 as iio
 
 class Syllable():
-  def __init__(self, images_annotations, segment_definitions, user_stats = None, module_stats = None, n_syllables = 3, print=True, use_full_names=True):
+  def __init__(self, images_annotations, segment_definitions, user_stats = None, module_stats = None, n_syllables = 3, print=True, use_syntax_scores=True):
     self.answered = False
     self.print = print
     self.segment_definitions = segment_definitions
     self.user_stats = user_stats
     self.module_stats = module_stats
     self.image = self.get_image(images_annotations)
-    solution_options = self.get_options_and_solution(use_full_names)
+    solution_options = self.get_options_and_solution(use_syntax_scores)
     self.solution, self.options = solution_options["solution"], solution_options["options"]
     self.solara_dict = self.create_solara_dict()
 
@@ -67,11 +67,10 @@ class ChooseArteryNameSyllable(Syllable):
     show_annotations_over_image(self.image, segment_ids=segment_ids, show_name = True, colors=colors, size=(3, 1))
 
   def get_image(self, images_annotations):
-    image_id = random.sample(list(images_annotations.keys()), k=1)[0]
-    return images_annotations[image_id]
+      return get_image(images_annotations)
 
-  def get_options_and_solution(self, use_full_names):
-    if use_full_names: 
+  def get_options_and_solution(self, use_syntax_scores):
+    if not use_syntax_scores: 
       name_parts = ["segment_alphanumeric", "segment_name"]
     else:
       name_parts = ["segment_alphanumeric"]
@@ -96,11 +95,7 @@ class ChooseArteryNameSyllable(Syllable):
     return ids_names_explanations
 
   def get_ids_names_explanations(self, id, name_parts=["segment_alphanumeric", "segment_name", "segment_description"]):
-    name = ""
-    for part in name_parts:
-      name += (self.segment_definitions.loc[self.segment_definitions["segment_id"]==id, part].values[0] + " ")
-    name = name[:-1]
-    return name
+    return get_ids_names_explanations(self, id, name_parts)
 
   def view_func(self):
     show_annotations_over_image(self.image, segment_ids=self.solution_id, show_name = False)
@@ -151,7 +146,7 @@ class RightOrLeftSyllable(Syllable):
   def view_func(self):
     show_annotations_over_image(self.image, segment_ids=[], show_name = False)
 
-  def get_options_and_solution(self, use_full_names):
+  def get_options_and_solution(self, use_syntax_scores):
     return {"solution": self.get_solution(), "options": self.get_options()}
 
   def get_solution(self):
@@ -193,13 +188,12 @@ class FindStenosisSyllable(Syllable):
     show_annotations_over_image(self.image, segment_ids=self.solution, point=[self.point[0].value, self.point[1].value], colors=colors, show_name=False, size=(3, 1))
 
   def get_image(self, images_annotations):
-    image_id = random.sample(list(images_annotations.keys()), k=1)[0]
-    return images_annotations[image_id]
+    return get_image(images_annotations)
 
   def view_func(self):
     show_annotations_over_image(self.image, segment_ids = [], point=[self.point[0].value, self.point[1].value], colors={"point": "magenta"})
 
-  def get_options_and_solution(self, use_full_names):
+  def get_options_and_solution(self, use_syntax_scores):
     return {"options": self.get_options(), "solution": self.get_solution()}
 
   def get_solution(self):
@@ -243,14 +237,13 @@ class ChooseArteryBoxSyllable(Syllable):
     show_annotations_over_image(self.image, segment_ids=self.solution, point=[self.point[0].value, self.point[1].value], colors=colors, show_name=False, size=(3, 1))
 
   def get_image(self, images_annotations):
-    image_id = random.sample(list(images_annotations.keys()), k=1)[0]
-    return images_annotations[image_id]
+    return get_image(images_annotations)
 
   def view_func(self):
     show_annotations_over_image(self.image, segment_ids = [], point=[self.point[0].value, self.point[1].value], colors={"point": "magenta"})
 
-  def get_options_and_solution(self, use_full_names):
-    if use_full_names: 
+  def get_options_and_solution(self, use_syntax_scores):
+    if not use_syntax_scores: 
       name_parts = ["segment_alphanumeric", "segment_name"]
     else:
       name_parts = ["segment_alphanumeric"]
@@ -268,11 +261,7 @@ class ChooseArteryBoxSyllable(Syllable):
     return self.solution_key
   
   def get_ids_names_explanations(self, id, name_parts=["segment_alphanumeric", "segment_name", "segment_description"]):
-    name = ""
-    for part in name_parts:
-      name += (self.segment_definitions.loc[self.segment_definitions["segment_id"]==id, part].values[0] + " ")
-    name = name[:-1]
-    return name
+    return get_ids_names_explanations(self, id, name_parts)
 
   def get_options(self):
     self.options_dict = {segment_id : str(i) for i, segment_id in enumerate(self.image["annotations"])}

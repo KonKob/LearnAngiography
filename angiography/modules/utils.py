@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import imageio.v3 as iio
 from ..meta.segment_definitions import segment_definitions
+import random
 
 def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, show_alias: bool=False, colors={}, point=None, size=(7, 4)):
     fig, ax = plt.subplots(figsize=size)
@@ -38,3 +39,16 @@ def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, 
     display(fig)
     plt.close()
     return segment_ids
+
+
+def get_ids_names_explanations(self, id, name_parts=["segment_alphanumeric", "segment_name", "segment_description"]):
+    name = ""
+    for part in name_parts:
+      name += (self.segment_definitions.loc[self.segment_definitions["segment_id"]==id, part].values[0] + " ")
+    name = name[:-1]
+    return name
+
+
+def get_image(images_annotations):
+    image_id = random.sample(list(images_annotations.keys()), k=1)[0]
+    return images_annotations[image_id]

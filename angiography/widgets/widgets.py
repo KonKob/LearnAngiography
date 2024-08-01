@@ -17,15 +17,15 @@ def Page():
 
 
 @solara.component
-def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive, use_full_names):
+def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive, use_syntax_scores):
   if start_module.value is None:
-    SelectModule(module_select, start_module, module_dict, n_syllables_reactive, use_full_names)
+    SelectModule(module_select, start_module, module_dict, n_syllables_reactive, use_syntax_scores)
   else:
-    StartModule(start_module.value, module_dict, start_module, n_syllables_reactive.value, use_full_names.value)
+    StartModule(start_module.value, module_dict, start_module, n_syllables_reactive.value, use_syntax_scores.value)
 
 
 @solara.component
-def SelectModule(module_select, start_module, module_dict, n_syllables_reactive, use_full_names):
+def SelectModule(module_select, start_module, module_dict, n_syllables_reactive, use_syntax_scores):
   def on_start_click():
     if module_select.value != "Choose":
       start_module.value = module_select.value
@@ -36,7 +36,7 @@ def SelectModule(module_select, start_module, module_dict, n_syllables_reactive,
   )
   min = 1
   max = 20
-  solara.Switch(label="Use syntax scores instead of full name", value=use_full_names, disabled=module_select.value not in ["ChooseArteryName", "ChooseArteryBox"])
+  solara.Switch(label="Use syntax scores instead of full name", value=use_syntax_scores, disabled=module_select.value not in ["ChooseArteryName", "ChooseArteryBox"])
   solara.SliderInt(f"Choose number of items (range {min} to {max})", value=n_syllables_reactive, min=min, max=max)
   solara.InputInt(f"Number of items: ", value=n_syllables_reactive)
   solara.Button("Start", on_click=on_start_click)
@@ -48,11 +48,11 @@ def MainPage():
     module_select = solara.reactive("Choose")
     start_module = solara.reactive(None)
     n_syllables_reactive = solara.reactive(3)
-    use_full_names = solara.reactive(True)
-    StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive, use_full_names)
+    use_syntax_scores = solara.reactive(False)
+    StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive, use_syntax_scores)
 
 @solara.component
-def StartModule(key, module_dict, start_module=None, n_syllables=3, use_full_names=True):
+def StartModule(key, module_dict, start_module=None, n_syllables=3, use_syntax_scores=True):
     m = Module(images_annotations = module_dict[key]["images"],
           syllable = module_dict[key]["syllable"],
           name = key,
@@ -61,7 +61,7 @@ def StartModule(key, module_dict, start_module=None, n_syllables=3, use_full_nam
           module_stats = None,
           print = False,
           n_syllables=n_syllables,
-          use_full_names = use_full_names)
+          use_syntax_scores = use_syntax_scores)
     ex_syll = solara.reactive(-1)
     View(m, ex_syll, start_module, n_syllables)
 
