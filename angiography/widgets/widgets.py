@@ -21,7 +21,6 @@ def Page():
 def set_theme():
   solara.lab.theme.themes.light.primary = theme_style["primary"]
   solara.lab.theme.themes.light.secondary = theme_style["secondary"]
-  path = str(Path.cwd().joinpath("angiography/media/"))
 
 @solara.component
 def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive, use_syntax_scores):
@@ -52,7 +51,11 @@ def SelectModule(module_select, start_module, module_dict, n_syllables_reactive,
           solara.Switch(label="Use syntax scores instead of full name", value=use_syntax_scores, disabled=module_select.value not in ["Choose artery name", "Locate artery"])
           solara.SliderInt(f"Choose number of items (range {min} to {max})", value=n_syllables_reactive, min=min, max=max)
       solara.InputInt(f"Number of items: ", value=n_syllables_reactive, style=n_items_style)
-    image_path = str(Path.cwd().joinpath("angiography/media/favicon.png"))
+    local_path = Path.cwd().joinpath("angiography/media/favicon.png")
+    if local_path.exists():
+        image_path = str(local_path)
+    else:
+        image_path = "https://github.com/KonKob/LearnAngiography/blob/6ce22964b262d5cb6e8dd4d388467f4f95dae27c/angiography/media/favicon.png"
     solara.Image(image_path, width="30vw")
   solara.Button("Start", on_click=on_start_click, style=start_button_style)
   
