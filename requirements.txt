@@ -1,10 +1,10 @@
 solara
 wget
 pandas
-numpy
 matplotlib
 imageio
 shapely
 flask
 simple-websocket
 flask-sock
+gunicorn
