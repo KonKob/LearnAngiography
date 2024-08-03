@@ -3,7 +3,7 @@ from ..modules.modules import Module
 from ..meta.segment_definitions import segment_definitions, segment_definitions_markdown
 from ..meta.module_pages import get_landing_pages
 from ..meta.utils import load_data
-from ..meta.styles import start_button_style, n_items_style, slider_style, select_style, return_button_style, markdown_style, text_corpus_style, text_header_style, background_style, widget_within_style, tab_style, theme_style
+from ..meta.styles import start_button_style, n_items_style, slider_style, select_style, return_button_style, markdown_style, text_corpus_style, text_header_style, background_style, widget_within_style, tab_style, theme_style, locate_slider_style
 
 
 @solara.component
@@ -113,7 +113,8 @@ def create_vboxes(options, widget, value):
 
 @solara.component
 def create_float_slider(options, widget, value):
-  widget(label=options["label"], value=value, min=options["min"], max=options["max"])
+  with solara.Column(gap="0vw", style=locate_slider_style):
+    widget(label=options["label"], value=value, min=options["min"], max=options["max"])
 
 widget_select_dict = {'react.component(solara.components.misc.Text)': create_text_widget,
                       'react.component(solara.components.togglebuttons.ToggleButtonsSingle)': create_toggle_buttons_single,
@@ -125,7 +126,6 @@ widget_select_dict = {'react.component(solara.components.misc.Text)': create_tex
 def ModulePage(m, ex_syll, n_syllables):
   m.executed_syllables = ex_syll.value
   solara.Title(f"LearnAngiography {m.module_name}")
-  solara.Text(f"{ex_syll.value+1}/{n_syllables}", style=text_corpus_style)
   m.syllables[m.executed_syllables].start()
   solara.Text(m.syllables[m.executed_syllables].task_description, style=text_header_style)
   solara_dict = m.syllables[m.executed_syllables].solara_dict 
@@ -143,6 +143,7 @@ def ModulePage(m, ex_syll, n_syllables):
     m.answer(answer)
     ex_syll.value += 1 
   solara.Button("Next", on_click=next, style=start_button_style)
+  solara.Text(f"{ex_syll.value+1}/{n_syllables}", style=text_corpus_style)
 
 
 @solara.component
@@ -152,12 +153,8 @@ def ResultsPage(m, start_module=None):
   solara.Markdown(rf"""
   # Results:
   
-  > {m.total_score}/{m.n_syllables}
-  
-  > {round(m.relative_score*100, 2)}%
+  > {m.total_score}/{m.n_syllables} = {round(m.relative_score*100, 2)}%
   """,
-  style=markdown_style
-  )
   if start_module is not None:
     def back_to_menu():
       start_module.value = None

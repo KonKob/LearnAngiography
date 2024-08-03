@@ -175,7 +175,7 @@ class FindStenosisSyllable(Syllable):
   
   def create_solara_dict(self):
     return {"widgets": [solara.SliderFloat, solara.SliderFloat],
-            "widget_options": [{"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]}],
+            "widget_options": [{"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]-1}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]-1}],
             "answer_value": [self.point[0], self.point[1]]}
 
   def create_solution(self):
@@ -224,7 +224,7 @@ class ChooseArteryBoxSyllable(Syllable):
   
   def create_solara_dict(self):
     return {"widgets": [solara.Tooltip, solara.SliderFloat, solara.SliderFloat],
-            "widget_options": [{"tooltip": self.get_ids_names_explanations(self.solution_key, ["segment_description"]), "widget_within": solara.Text, "widget_within_label": "description"}, {"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]}],
+            "widget_options": [{"tooltip": self.get_ids_names_explanations(self.solution_key, ["segment_description"]), "widget_within": solara.Text, "widget_within_label": "Description"}, {"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]-1}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]-1}],
             "answer_value": [None, self.point[0], self.point[1]]}
   
   def create_solution(self):

@@ -46,6 +46,12 @@ slider_style = {
     "padding": "2vw 2vw",
 }
 
+locate_slider_style = {
+    "width": "30vw",
+    "position": "relative",
+    "left": "2vw"
+}
+
 select_style = {
     "width": "40vw",
     "height": "7.5vw",
@@ -94,7 +100,10 @@ plot_style = {
 
 widget_within_style = {
     "outline-style": "solid",
-    "font-size": "1vw"
+    "font-size": "1vw",
+    "width": "10vw",
+    "position": "relative",
+    "left": "1vw"
 }
 
 tab_style = {
