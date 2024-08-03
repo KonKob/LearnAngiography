@@ -4,6 +4,7 @@ from ..meta.segment_definitions import segment_definitions, segment_definitions_
 from ..meta.module_pages import get_landing_pages
 from ..meta.utils import load_data
 from ..meta.styles import start_button_style, n_items_style, slider_style, select_style, return_button_style, markdown_style, text_corpus_style, text_header_style, background_style, widget_within_style, tab_style, theme_style, locate_slider_style
+from pathlib import Path
 
 
 @solara.component
@@ -20,6 +21,7 @@ def Page():
 def set_theme():
   solara.lab.theme.themes.light.primary = theme_style["primary"]
   solara.lab.theme.themes.light.secondary = theme_style["secondary"]
+  path = str(Path.cwd().joinpath("angiography/media/"))
 
 @solara.component
 def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive, use_syntax_scores):
@@ -35,20 +37,23 @@ def SelectModule(module_select, start_module, module_dict, n_syllables_reactive,
   def on_start_click():
     if module_select.value != "Choose":
       start_module.value = module_select.value
-  with solara.Column(gap="0vw", style=select_style):
-    s = solara.Select(
-        label="Select module", 
-        values=list(module_dict.keys()), 
-        value=module_select,
-        style=select_style,
-    )
-  min = 1
-  max = 20
-
-  with solara.Column(gap="2vw", style=slider_style):
-       solara.Switch(label="Use syntax scores instead of full name", value=use_syntax_scores, disabled=module_select.value not in ["Choose artery name", "Locate artery"])
-       solara.SliderInt(f"Choose number of items (range {min} to {max})", value=n_syllables_reactive, min=min, max=max)
-  solara.InputInt(f"Number of items: ", value=n_syllables_reactive, style=n_items_style)
+  with solara.Row(gap="5vw"):
+    with solara.Column(gap="0vw"):
+      with solara.Column(gap="0vw", style=select_style):
+        s = solara.Select(
+            label="Select module", 
+            values=list(module_dict.keys()), 
+            value=module_select,
+            style=select_style,
+        )
+      min = 1
+      max = 20
+      with solara.Column(gap="2vw", style=slider_style):
+          solara.Switch(label="Use syntax scores instead of full name", value=use_syntax_scores, disabled=module_select.value not in ["Choose artery name", "Locate artery"])
+          solara.SliderInt(f"Choose number of items (range {min} to {max})", value=n_syllables_reactive, min=min, max=max)
+      solara.InputInt(f"Number of items: ", value=n_syllables_reactive, style=n_items_style)
+    image_path = str(Path.cwd().joinpath("angiography/media/favicon.png"))
+    solara.Image(image_path, width="30vw")
   solara.Button("Start", on_click=on_start_click, style=start_button_style)
   
 
@@ -155,6 +160,7 @@ def ResultsPage(m, start_module=None):
   
   > {m.total_score}/{m.n_syllables} = {round(m.relative_score*100, 2)}%
   """,
+  style = markdown_style)
   if start_module is not None:
     def back_to_menu():
       start_module.value = None
