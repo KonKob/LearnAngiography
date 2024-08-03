@@ -1,6 +1,6 @@
 def get_landing_pages(m):
-    landing_pages = {"FindStenosis": fr"""
-        # Find stenosis
+    landing_pages = {"Locate stenosis": fr"""
+        # Locate stenosis
         ## Module description 
         Locate the stenosis in the x-ray angiography image.
         Select the coordinates using interactive x and y slider. 
@@ -10,8 +10,8 @@ def get_landing_pages(m):
         The authors of the ARCADE dataset, Popov et al., 2024, used the syntax score (Sianos et al, 2005), to define stenosis as >= 50% degree of constriction  in coronary arteries of at least 1.5 _mm_ diameter.
         """,
         
-        "ChooseArteryBox": fr"""
-        # Find artery
+        "Locate artery": fr"""
+        # Locate artery
         ## Module description
         Locate the requested artery in the x-ray angiography image.
         Select the coordinates using interactive x and y slider. 
@@ -22,7 +22,7 @@ def get_landing_pages(m):
 
         """,
 
-        "ChooseArteryName": fr"""
+        "Choose artery name": fr"""
         # Choose artery name
         ## Module description 
         Choose between 4 different options, which artery is shown in the x-ray angiography image.
@@ -34,7 +34,7 @@ def get_landing_pages(m):
         
         """,
 
-        "RightOrLeft": fr"""
+        "Right or left": fr"""
         # Right or left
         ## Module description 
         Choose whether right or left coronary artery is depicted predominantely in the image. 

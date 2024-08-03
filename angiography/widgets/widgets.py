@@ -3,11 +3,13 @@ from ..modules.modules import Module
 from ..meta.segment_definitions import segment_definitions, segment_definitions_markdown
 from ..meta.module_pages import get_landing_pages
 from ..meta.utils import load_data
+from ..meta.styles import start_button_style, n_items_style, slider_style, select_style, return_button_style, markdown_style, text_corpus_style, text_header_style, background_style, widget_within_style, tab_style, theme_style
 
 
 @solara.component
 def Page():
-    with solara.lab.Tabs():
+    set_theme()
+    with solara.lab.Tabs(color=tab_style["color"], background_color=tab_style["background_color"], slider_color=tab_style["slider_color"]):
         with solara.lab.Tab("main"):
             MainPage()
         with solara.lab.Tab("about"):
@@ -15,6 +17,9 @@ def Page():
         with solara.lab.Tab("syntax"):
             SyntaxPage()
 
+def set_theme():
+  solara.lab.theme.themes.light.primary = theme_style["primary"]
+  solara.lab.theme.themes.light.secondary = theme_style["secondary"]
 
 @solara.component
 def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive, use_syntax_scores):
@@ -26,20 +31,25 @@ def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive
 
 @solara.component
 def SelectModule(module_select, start_module, module_dict, n_syllables_reactive, use_syntax_scores):
+  solara.Title("LearnAngiography Main")
   def on_start_click():
     if module_select.value != "Choose":
       start_module.value = module_select.value
-  solara.Select(
-      label="Select module", 
-      values=["Choose"] + list(module_dict.keys()), 
-      value=module_select
-  )
+  with solara.Column(gap="0vw", style=select_style):
+    s = solara.Select(
+        label="Select module", 
+        values=list(module_dict.keys()), 
+        value=module_select,
+        style=select_style,
+    )
   min = 1
   max = 20
-  solara.Switch(label="Use syntax scores instead of full name", value=use_syntax_scores, disabled=module_select.value not in ["ChooseArteryName", "ChooseArteryBox"])
-  solara.SliderInt(f"Choose number of items (range {min} to {max})", value=n_syllables_reactive, min=min, max=max)
-  solara.InputInt(f"Number of items: ", value=n_syllables_reactive)
-  solara.Button("Start", on_click=on_start_click)
+
+  with solara.Column(gap="2vw", style=slider_style):
+       solara.Switch(label="Use syntax scores instead of full name", value=use_syntax_scores, disabled=module_select.value not in ["Choose artery name", "Locate artery"])
+       solara.SliderInt(f"Choose number of items (range {min} to {max})", value=n_syllables_reactive, min=min, max=max)
+  solara.InputInt(f"Number of items: ", value=n_syllables_reactive, style=n_items_style)
+  solara.Button("Start", on_click=on_start_click, style=start_button_style)
   
 
 @solara.component
@@ -67,13 +77,14 @@ def StartModule(key, module_dict, start_module=None, n_syllables=3, use_syntax_s
 
 @solara.component
 def LandingPage(m, ex_syll, start_module):
-  solara.Markdown(get_landing_pages(m))
+  solara.Title(f"LearnAngiography {m.module_name}")
+  solara.Markdown(get_landing_pages(m), style=markdown_style)
   def start():
     ex_syll.value += 1
-  solara.Button("Start", on_click=start)
+  solara.Button("Start", on_click=start, style=start_button_style)
   def return_to_main():
     start_module.value = None
-  solara.Button("Back to main menu", on_click=return_to_main)
+  solara.Button("Back to main menu", on_click=return_to_main, style=return_button_style)
 
 @solara.component
 def create_widgets(options, widget, value):  
@@ -83,15 +94,15 @@ def create_widgets(options, widget, value):
 @solara.component
 def create_tooltip(options, widget, value):
   with widget(options["tooltip"]):
-    options["widget_within"](options["widget_within_label"], style=options["widget_within_style"])
+    options["widget_within"](options["widget_within_label"], style=widget_within_style)
 
 @solara.component
 def create_text_widget(options, widget, value):
-  widget(label=options["label"], value=options["value"])
+  widget(label=options["label"], value=options["value"], style=text_corpus_style)
 
 @solara.component
 def create_toggle_buttons_single(options, widget, value):
-  widget(value=value, values=options["options"])
+  widget(value=value, values=options["options"], style=text_corpus_style)
 
 @solara.component
 def create_vboxes(options, widget, value):
@@ -113,9 +124,10 @@ widget_select_dict = {'react.component(solara.components.misc.Text)': create_tex
 @solara.component
 def ModulePage(m, ex_syll, n_syllables):
   m.executed_syllables = ex_syll.value
-  solara.Text(f"{ex_syll.value+1}/{n_syllables}")
+  solara.Title(f"LearnAngiography {m.module_name}")
+  solara.Text(f"{ex_syll.value+1}/{n_syllables}", style=text_corpus_style)
   m.syllables[m.executed_syllables].start()
-  solara.Text(m.syllables[m.executed_syllables].task_description)
+  solara.Text(m.syllables[m.executed_syllables].task_description, style=text_header_style)
   solara_dict = m.syllables[m.executed_syllables].solara_dict 
   answer_list = []
   for i, widget in enumerate(solara_dict["widgets"]):
@@ -130,27 +142,34 @@ def ModulePage(m, ex_syll, n_syllables):
   def next():
     m.answer(answer)
     ex_syll.value += 1 
-  solara.Button("Next", on_click=next)
+  solara.Button("Next", on_click=next, style=start_button_style)
 
 
 @solara.component
 def ResultsPage(m, start_module=None):
+  solara.Title(f"LearnAngiography {m.module_name}")
   m.result()
-  solara.Text(f"Results:")
-  solara.Text(f"{m.total_score}/{m.n_syllables}")
-  solara.Text(f"{round(m.relative_score*100, 2)}%")
+  solara.Markdown(rf"""
+  # Results:
+  
+  > {m.total_score}/{m.n_syllables}
+  
+  > {round(m.relative_score*100, 2)}%
+  """,
+  style=markdown_style
+  )
   if start_module is not None:
     def back_to_menu():
       start_module.value = None
-    solara.Button("Back to main menu", on_click=back_to_menu)
-  with solara.Column(gap="20px"):
+    solara.Button("Back to main menu", on_click=back_to_menu, style=return_button_style)
+  with solara.Column(gap="4vw"):
     for syllable in m.syllables:
-      with solara.Row(gap="10px"):
+      with solara.Row(gap="2vw", style=background_style):
         syllable.result()
-        with solara.Column(gap="5px"):
-          solara.Text(syllable.task_description)
-          solara.Text(f"Your answer: {syllable.result_answer}")
-          solara.Text(f"Correct answer: {syllable.result_solution}")
+        with solara.Column(gap="0vw"):
+          solara.Text(f"{syllable.task_description}", style=text_header_style)
+          solara.Text(f"Your answer: {syllable.result_answer}", style=text_corpus_style)
+          solara.Text(f"Correct answer: {syllable.result_solution}", style=text_corpus_style)
 
 
 @solara.component
@@ -182,8 +201,9 @@ def MetaPage():
 
   ## References
 
-  [1] Popov, M., Amanturdieva, A., Zhaksylyk, N. et al. Dataset for Automatic Region-based Coronary Artery Disease Diagnostics Using X-Ray Angiography Images. Sci Data 11, 20 (2024).""")
+  [1] Popov, M., Amanturdieva, A., Zhaksylyk, N. et al. Dataset for Automatic Region-based Coronary Artery Disease Diagnostics Using X-Ray Angiography Images. Sci Data 11, 20 (2024).""",
+  style = markdown_style)
 
 @solara.component
 def SyntaxPage():
-  solara.Markdown(segment_definitions_markdown)
+  solara.Markdown(segment_definitions_markdown, style=markdown_style)

@@ -3,6 +3,7 @@ import numpy as np
 import imageio.v3 as iio
 from ..meta.segment_definitions import segment_definitions
 import random
+from ..meta.styles import plot_style
 
 def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, show_alias: bool=False, colors={}, point=None, size=(7, 4)):
     fig, ax = plt.subplots(figsize=size)
@@ -11,7 +12,7 @@ def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, 
         if "point" in colors:
             color = colors["point"]
         else:
-            color = "magenta"
+            color = plot_style["foreground"]
         ax.scatter(point[0], point[1], s = (size[0]*size[1])*1.5, color=color)
     for i, annotation in enumerate(image["annotations"].values()):
         segment_category = str(annotation["category_id"])
@@ -30,12 +31,21 @@ def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, 
         if segment_category in colors:
             color = colors[segment_category]
         else:
-            color = "blue"
+            color = plot_style["foreground"]
         ax.plot(x, y, color=color)
         if show_name:
-          ax.text(np.mean(x), np.mean(y), segment_definitions.loc[segment_definitions["segment_id"]==segment_category, "segment_name"].values[0], color="white")
+          ax.text(np.mean(x), np.mean(y), segment_definitions.loc[segment_definitions["segment_id"]==segment_category, "segment_name"].values[0], color=plot_style["text-color"])
         if show_alias:
-          ax.text(np.mean(x), np.mean(y), i, color="white", fontsize=(size[0]*size[1])/2)
+          ax.text(np.mean(x), np.mean(y), i, color=plot_style["text-color"], fontsize=(size[0]*size[1])/2)
+          
+    ax.set_facecolor(plot_style["face-color"])
+    fig.set_facecolor(plot_style["face-color"])
+    ax.xaxis.label.set_color(plot_style["axis-color"])
+    ax.yaxis.label.set_color(plot_style["axis-color"])
+    ax.tick_params(axis='x', colors=plot_style["axis-color"])
+    ax.tick_params(axis='y', colors=plot_style["axis-color"])
+    ax.spines['left'].set_color(plot_style["axis-color"])
+    ax.spines['bottom'].set_color(plot_style["axis-color"])
     display(fig)
     plt.close()
     return segment_ids

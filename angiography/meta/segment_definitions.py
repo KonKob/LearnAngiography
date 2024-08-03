@@ -115,7 +115,7 @@ segment_definitions_markdown = """
 
         |syntax score|name|description|
         |:---|:---|:---|
-        | RCA proximal | From ostium to one half the distance to the acute margin of the heart. |
+        | 1 | RCA proximal | From ostium to one half the distance to the acute margin of the heart. |
         | 2 | RCA mid | From end of first segment to acute margin of heart. |
         | 3 | RCA distal | From the acute margin of the heart to the origin of the posterior descending artery. |
         | 4 | Posterior descending | Running in the posterior interventricular groove. |

@@ -205,7 +205,7 @@ class FindStenosisSyllable(Syllable):
     return "26"
 
   def get_options(self):
-    self.task_description = "Find the stenosis in the image!"
+    self.task_description = "Locate the stenosis in the image!"
     self.point = [solara.reactive(0), solara.reactive(0)]
     return []
 
@@ -224,7 +224,7 @@ class ChooseArteryBoxSyllable(Syllable):
   
   def create_solara_dict(self):
     return {"widgets": [solara.Tooltip, solara.SliderFloat, solara.SliderFloat],
-            "widget_options": [{"tooltip": self.get_ids_names_explanations(self.solution_key, ["segment_description"]), "widget_within": solara.Text, "widget_within_label": "description", "widget_within_style": {"outline-style": "solid"}}, {"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]}],
+            "widget_options": [{"tooltip": self.get_ids_names_explanations(self.solution_key, ["segment_description"]), "widget_within": solara.Text, "widget_within_label": "description"}, {"label": "x", "min": 0, "max": iio.imread(self.image["file_path"]).shape[0]}, {"label": "y", "min": 0, "max": iio.imread(self.image["file_path"]).shape[1]}],
             "answer_value": [None, self.point[0], self.point[1]]}
   
   def create_solution(self):
@@ -252,7 +252,7 @@ class ChooseArteryBoxSyllable(Syllable):
   def get_solution(self, name_parts):
     self.solution_key = adjust_to_stats(list(self.options_dict.keys()), user_stats = self.user_stats, module_stats = self.module_stats, k=1)[0]
     artery_to_find = self.get_ids_names_explanations(self.solution_key, name_parts)
-    self.task_description = f"Find {artery_to_find} in the image!"
+    self.task_description = f"Locate {artery_to_find} in the image!"
     segmentation = self.image["annotations"][self.solution_key]["segmentation"][0]
     x = segmentation[::2]
     y = segmentation[1::2]

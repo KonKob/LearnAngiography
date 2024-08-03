@@ -34,10 +34,11 @@ def load_data():
     images_annotations = {str(image["id"]):{"file_path": syntax_images_path.joinpath(image["file_name"]), "annotations": {str(annotation["category_id"]):annotation for annotation in annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in annotations["images"]}
     stenosis_images_annotations = {str(image["id"]):{"file_path": stenosis_images_path.joinpath(image["file_name"]), "annotations": {str(annotation["category_id"]):annotation for annotation in stenosis_annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in stenosis_annotations["images"]}
     
-    module_dict = {"ChooseArteryName": {"images": images_annotations, "syllable": ChooseArteryNameSyllable},
-                "RightOrLeft": {"images": images_annotations, "syllable": RightOrLeftSyllable},
-                "FindStenosis": {"images": stenosis_images_annotations, "syllable": FindStenosisSyllable},
-                "ChooseArteryBox": {"images": images_annotations, "syllable": ChooseArteryBoxSyllable}
+    module_dict = {
+        "Right or left": {"images": images_annotations, "syllable": RightOrLeftSyllable},
+        "Choose artery name": {"images": images_annotations, "syllable": ChooseArteryNameSyllable},
+        "Locate artery": {"images": images_annotations, "syllable": ChooseArteryBoxSyllable},
+        "Locate stenosis": {"images": stenosis_images_annotations, "syllable": FindStenosisSyllable},
                 }
             
     return module_dict
