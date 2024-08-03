@@ -1,7 +1,7 @@
 # LearnAngiography
 <img align="left" width="200" height="200" src="/angiography/media/favicon.png?raw=true">
 
-This is a free web application to improve your understanding of x-ray coronary angiography images in different quiz modules. You can currently use the GUI via [Google Colab](https://colab.research.google.com/github/KonKob/LearnAngiography/blob/main/angiography/angiography.ipynb). 
+This is a free web application to improve your understanding of x-ray coronary angiography images in different quiz modules. You can currently use the GUI via [Google Colab](https://colab.research.google.com/github/KonKob/LearnAngiography/blob/main/angiography.ipynb). 
 
 
 
