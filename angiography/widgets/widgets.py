@@ -4,7 +4,9 @@ from ..meta.segment_definitions import segment_definitions_dict, segment_definit
 from ..meta.module_pages import get_landing_pages
 from ..meta.utils import load_data
 from ..meta.styles import start_button_style, n_items_style, slider_style, select_style, return_button_style, markdown_style, text_corpus_style, text_header_style, background_style, widget_within_style, tab_style, theme_style, locate_slider_style
+import os
 from pathlib import Path
+import requests
 
 
 @solara.component
@@ -21,6 +23,14 @@ def Page():
 def set_theme():
   solara.lab.theme.themes.light.primary = theme_style["primary"]
   solara.lab.theme.themes.light.secondary = theme_style["secondary"]
+  favicon_path = Path(os.environ['PATH'].split(os.pathsep)[0]).parent.joinpath('lib/python3.11/site-packages/solara/server/assets/favicon.svg')
+  if favicon_path.exists():
+    favicon_path.unlink()
+    new_favicon_path = "https://raw.githubusercontent.com/KonKob/LearnAngiography/main/angiography/media/favicon.png"
+    response = requests.get(new_favicon_path)
+    if response.status_code == 200:
+        with open(favicon_path, 'wb') as file:
+            file.write(response.content)
 
 @solara.component
 def StartOrSelect(module_select, start_module, module_dict, n_syllables_reactive, use_syntax_scores):
