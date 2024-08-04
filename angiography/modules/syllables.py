@@ -13,13 +13,14 @@ class Syllable():
     self.user_stats = user_stats
     self.module_stats = module_stats
     self.image = self.get_image(images_annotations)
+    self.image_data = iio.imread(self.image["file_path"])
     solution_options = self.get_options_and_solution(use_syntax_scores)
     self.solution, self.options = solution_options["solution"], solution_options["options"]
     self.solara_dict = self.create_solara_dict()
 
   def answer(self, answer):
     self.answer = answer
-    if not self.answered:
+    if not self.answered: 
       self.assert_answer(self.answer)
       self.answered = True
       if self.check_answer(self.answer):
@@ -64,7 +65,7 @@ class ChooseArteryNameSyllable(Syllable):
     else:
       segment_ids = [self.solution_id, answer_id]
       colors = {self.solution_id:"yellow", answer_id: "red"}
-    show_annotations_over_image(self.image, segment_ids=segment_ids, show_name = True, colors=colors, size=(3, 1))
+    show_annotations_over_image(self.image_data, self.image, segment_ids=segment_ids, show_name = True, colors=colors, size=(3, 1))
 
   def get_image(self, images_annotations):
       return get_image(images_annotations)
@@ -98,7 +99,7 @@ class ChooseArteryNameSyllable(Syllable):
     return get_ids_names_explanations(self.segment_definitions_dict, id, name_parts)
 
   def view_func(self):
-    show_annotations_over_image(self.image, segment_ids=self.solution_id, show_name = False)
+    show_annotations_over_image(self.image_data, self.image, segment_ids=self.solution_id, show_name = False)
 
   def check_answer(self, answer):
     return answer == self.solution
@@ -132,7 +133,7 @@ class RightOrLeftSyllable(Syllable):
       colors = {id:"green" for id in segment_ids}
     else:
       colors = {id:"red" for id in segment_ids}
-    show_annotations_over_image(self.image, segment_ids=segment_ids, show_name = True, colors=colors, size=(4, 2))
+    show_annotations_over_image(self.image_data, self.image, segment_ids=segment_ids, show_name = True, colors=colors, size=(4, 2))
 
   def get_image(self, images_annotations):
     while True:
@@ -144,7 +145,7 @@ class RightOrLeftSyllable(Syllable):
     return image
 
   def view_func(self):
-    show_annotations_over_image(self.image, segment_ids=[], show_name = False)
+    show_annotations_over_image(self.image_data, self.image, segment_ids=[], show_name = False)
 
   def get_options_and_solution(self, use_syntax_scores):
     return {"solution": self.get_solution(), "options": self.get_options()}
@@ -185,13 +186,13 @@ class FindStenosisSyllable(Syllable):
       colors = {"point": "green", self.solution: "yellow"}
     else:
       colors = {"point": "red", self.solution: "yellow"}
-    show_annotations_over_image(self.image, segment_ids=self.solution, point=[self.point[0].value, self.point[1].value], colors=colors, show_name=False, size=(3, 1))
+    show_annotations_over_image(self.image_data, self.image, segment_ids=self.solution, point=[self.point[0].value, self.point[1].value], colors=colors, show_name=False, size=(3, 1))
 
   def get_image(self, images_annotations):
     return get_image(images_annotations)
 
   def view_func(self):
-    show_annotations_over_image(self.image, segment_ids = [], point=[self.point[0].value, self.point[1].value], colors={"point": "magenta"})
+    show_annotations_over_image(self.image_data, self.image, segment_ids = [], point=[self.point[0].value, self.point[1].value], colors={"point": "magenta"})
 
   def get_options_and_solution(self, use_syntax_scores):
     return {"options": self.get_options(), "solution": self.get_solution()}
@@ -234,13 +235,13 @@ class ChooseArteryBoxSyllable(Syllable):
       colors = {"point": "green", self.solution: "yellow"}
     else:
       colors = {"point": "red", self.solution: "yellow"}
-    show_annotations_over_image(self.image, segment_ids=self.solution, point=[self.point[0].value, self.point[1].value], colors=colors, show_name=False, size=(3, 1))
+    show_annotations_over_image(self.image_data, self.image, segment_ids=self.solution, point=[self.point[0].value, self.point[1].value], colors=colors, show_name=False, size=(3, 1))
 
   def get_image(self, images_annotations):
     return get_image(images_annotations)
 
   def view_func(self):
-    show_annotations_over_image(self.image, segment_ids = [], point=[self.point[0].value, self.point[1].value], colors={"point": "magenta"})
+    show_annotations_over_image(self.image_data, self.image, segment_ids = [], point=[self.point[0].value, self.point[1].value], colors={"point": "magenta"})
 
   def get_options_and_solution(self, use_syntax_scores):
     if not use_syntax_scores: 

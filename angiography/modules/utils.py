@@ -4,9 +4,9 @@ from ..meta.segment_definitions import segment_definitions_dict
 import random
 from ..meta.styles import plot_style
 
-def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, show_alias: bool=False, colors={}, point=None, size=(7, 4)):
+def show_annotations_over_image(image_data, image, segment_ids="all", show_name: bool=True, show_alias: bool=False, colors={}, point=None, size=(7, 4)):
     fig, ax = plt.subplots(figsize=size)
-    ax.imshow(iio.imread(image["file_path"]), cmap="Greys")
+    ax.imshow(image_data, cmap="Greys")
     if point is not None:
         if "point" in colors:
             color = colors["point"]
@@ -31,7 +31,7 @@ def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, 
             color = colors[segment_category]
         else:
             color = plot_style["foreground"]
-        ax.plot(x, y, color=color)
+        ax.plot(x+[x[0]], y+[y[0]], color=color)
         if show_name:
           ax.text(sum(x)/len(x), sum(y)/len(y), get_ids_names_explanations(segment_definitions_dict, segment_category, name_parts=["segment_name"]), color=plot_style["text-color"])
         if show_alias:
