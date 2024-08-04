@@ -6,10 +6,10 @@ import solara
 import imageio.v3 as iio
 
 class Syllable():
-  def __init__(self, images_annotations, segment_definitions, user_stats = None, module_stats = None, n_syllables = 3, print=True, use_syntax_scores=True):
+  def __init__(self, images_annotations, segment_definitions_dict, user_stats = None, module_stats = None, n_syllables = 3, print=True, use_syntax_scores=True):
     self.answered = False
     self.print = print
-    self.segment_definitions = segment_definitions
+    self.segment_definitions_dict = segment_definitions_dict
     self.user_stats = user_stats
     self.module_stats = module_stats
     self.image = self.get_image(images_annotations)
@@ -95,7 +95,7 @@ class ChooseArteryNameSyllable(Syllable):
     return ids_names_explanations
 
   def get_ids_names_explanations(self, id, name_parts=["segment_alphanumeric", "segment_name", "segment_description"]):
-    return get_ids_names_explanations(self, id, name_parts)
+    return get_ids_names_explanations(self.segment_definitions_dict, id, name_parts)
 
   def view_func(self):
     show_annotations_over_image(self.image, segment_ids=self.solution_id, show_name = False)
@@ -261,7 +261,7 @@ class ChooseArteryBoxSyllable(Syllable):
     return self.solution_key
   
   def get_ids_names_explanations(self, id, name_parts=["segment_alphanumeric", "segment_name", "segment_description"]):
-    return get_ids_names_explanations(self, id, name_parts)
+    return get_ids_names_explanations(self.segment_definitions_dict, id, name_parts)
 
   def get_options(self):
     self.options_dict = {segment_id : str(i) for i, segment_id in enumerate(self.image["annotations"])}

@@ -2,6 +2,7 @@ import wget
 from zipfile import ZipFile
 from pathlib import Path
 import json
+import requests
 from ..modules.syllables import RightOrLeftSyllable, ChooseArteryNameSyllable, ChooseArteryBoxSyllable, FindStenosisSyllable
 
 def download_sample_data(destination_dir_path: str, dataset_url = 'https://zenodo.org/api/records/10390295/files-archive') -> None:
@@ -22,13 +23,16 @@ def load_data():
 
     if not arcade_path.exists():
         #destination_dir_path = download_sample_data(destination_dir_path=destination_dir_path)
-        files_urls_path = str(cwd.joinpath("LearnAngiography/angiography/media/files_urls_final.json"))
-        with open(files_urls_path, "r") as file:
-            files_urls = json.load(file)
-        with open(cwd.joinpath("LearnAngiography/angiography/media/syntax.json"), "rb") as file:
-            annotations = json.load(file)
-        with open(cwd.joinpath("LearnAngiography/angiography/media/stenosis.json"), "rb") as file:
-            stenosis_annotations = json.load(file)
+        files_urls_path = "https://raw.githubusercontent.com/KonKob/LearnAngiography/main/angiography/media/files_urls_final.json"
+        r = requests.get(files_urls_path)
+        files_urls = r.json()
+        files_urls_path = "https://raw.githubusercontent.com/KonKob/LearnAngiography/main/angiography/media/syntax.json"
+        r = requests.get(files_urls_path)
+        annotations = r.json()
+        files_urls_path = "https://raw.githubusercontent.com/KonKob/LearnAngiography/main/angiography/media/stenosis.json"
+        r = requests.get(files_urls_path)
+        stenosis_annotations = r.json()
+        
         images_annotations = {str(image["id"]):{"file_path": files_urls["syntax"][image["file_name"]], "annotations": {str(annotation["category_id"]):annotation for annotation in annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in annotations["images"]}
         stenosis_images_annotations = {str(image["id"]):{"file_path": files_urls["stenosis"][image["file_name"]], "annotations": {str(annotation["category_id"]):annotation for annotation in stenosis_annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in stenosis_annotations["images"]}
 

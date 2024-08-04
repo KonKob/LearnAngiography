@@ -1,6 +1,6 @@
 import solara
 from ..modules.modules import Module
-from ..meta.segment_definitions import segment_definitions, segment_definitions_markdown
+from ..meta.segment_definitions import segment_definitions_dict, segment_definitions_markdown
 from ..meta.module_pages import get_landing_pages
 from ..meta.utils import load_data
 from ..meta.styles import start_button_style, n_items_style, slider_style, select_style, return_button_style, markdown_style, text_corpus_style, text_header_style, background_style, widget_within_style, tab_style, theme_style, locate_slider_style
@@ -44,7 +44,7 @@ def SelectModule(module_select, start_module, module_dict, n_syllables_reactive,
             values=list(module_dict.keys()), 
             value=module_select,
             style=select_style,
-        )
+        ) 
       min = 1
       max = 20
       with solara.Column(gap="2vw", style=slider_style):
@@ -74,7 +74,7 @@ def StartModule(key, module_dict, start_module=None, n_syllables=3, use_syntax_s
     m = Module(images_annotations = module_dict[key]["images"],
           syllable = module_dict[key]["syllable"],
           name = key,
-          segment_definitions = segment_definitions,
+          segment_definitions_dict = segment_definitions_dict,
           user_stats = None,
           module_stats = None,
           print = False,

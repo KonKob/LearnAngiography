@@ -1,5 +1,3 @@
-import pandas as pd
-
 segment_definitions_dict = {'segment_id': {0: '1',
   1: '2',
   2: '3',
@@ -104,8 +102,6 @@ segment_definitions_dict = {'segment_id': {0: '1',
   23: 'Second posterolateral branch from segment 16.',
   24: 'Third posterolateral branch from segment 16.',
   25: 'stenosis'}}
-
-segment_definitions = pd.DataFrame(segment_definitions_dict)
 
 
 segment_definitions_markdown = """      

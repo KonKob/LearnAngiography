@@ -1,6 +1,5 @@
 solara
 wget
-pandas
 matplotlib
 imageio
 shapely

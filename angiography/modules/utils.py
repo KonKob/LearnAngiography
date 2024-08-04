@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import imageio.v3 as iio
-from ..meta.segment_definitions import segment_definitions
+from ..meta.segment_definitions import segment_definitions_dict
 import random
 from ..meta.styles import plot_style
 
@@ -33,7 +33,7 @@ def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, 
             color = plot_style["foreground"]
         ax.plot(x, y, color=color)
         if show_name:
-          ax.text(sum(x)/len(x), sum(y)/len(y), segment_definitions.loc[segment_definitions["segment_id"]==segment_category, "segment_name"].values[0], color=plot_style["text-color"])
+          ax.text(sum(x)/len(x), sum(y)/len(y), get_ids_names_explanations(segment_definitions_dict, segment_category, name_parts=["segment_name"]), color=plot_style["text-color"])
         if show_alias:
           ax.text(sum(x)/len(x), sum(y)/len(y), i, color=plot_style["text-color"], fontsize=(size[0]*size[1])/2)
           
@@ -45,15 +45,16 @@ def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, 
     ax.tick_params(axis='y', colors=plot_style["axis-color"])
     ax.spines['left'].set_color(plot_style["axis-color"])
     ax.spines['bottom'].set_color(plot_style["axis-color"])
-    display(fig)
+    display(fig) 
     plt.close()
     return segment_ids
 
 
-def get_ids_names_explanations(self, id, name_parts=["segment_alphanumeric", "segment_name", "segment_description"]):
+def get_ids_names_explanations(segment_definitions_dict, id, name_parts=["segment_alphanumeric", "segment_name", "segment_description"]):
     name = ""
-    for part in name_parts:
-      name += (self.segment_definitions.loc[self.segment_definitions["segment_id"]==id, part].values[0] + " ")
+    for part in name_parts:      
+      key = list(segment_definitions_dict["segment_id"].keys())[list(segment_definitions_dict["segment_id"].values()).index(id)]
+      name += (segment_definitions_dict[part][key] + " ")
     name = name[:-1]
     return name
 
