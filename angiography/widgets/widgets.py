@@ -65,7 +65,7 @@ def SelectModule(module_select, start_module, module_dict, n_syllables_reactive,
     if local_path.exists():
         image_path = str(local_path)
     else:
-        image_path = "https://github.com/KonKob/LearnAngiography/blob/6ce22964b262d5cb6e8dd4d388467f4f95dae27c/angiography/media/favicon.png"
+        image_path = "https://raw.githubusercontent.com/KonKob/LearnAngiography/main/angiography/media/favicon.png"
     solara.Image(image_path, width="30vw")
   solara.Button("Start", on_click=on_start_click, style=start_button_style)
   
