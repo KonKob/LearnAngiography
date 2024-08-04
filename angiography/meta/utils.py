@@ -20,7 +20,7 @@ def load_data():
     destination_dir_path = str(cwd.parent)
     arcade_path = Path(destination_dir_path).joinpath("arcade/")
 
-    if arcade_path.exists():
+    if not arcade_path.exists():
         #destination_dir_path = download_sample_data(destination_dir_path=destination_dir_path)
         files_urls_path = str(cwd.joinpath("angiography/media/files_urls_final.json"))
         with open(files_urls_path, "r") as file:
