@@ -22,12 +22,12 @@ def load_data():
 
     if not arcade_path.exists():
         #destination_dir_path = download_sample_data(destination_dir_path=destination_dir_path)
-        files_urls_path = str(cwd.joinpath("angiography/media/files_urls_final.json"))
+        files_urls_path = str(cwd.joinpath("LearnAngiography/angiography/media/files_urls_final.json"))
         with open(files_urls_path, "r") as file:
             files_urls = json.load(file)
-        with open(cwd.joinpath("angiography/media/syntax.json"), "rb") as file:
+        with open(cwd.joinpath("LearnAngiography/angiography/media/syntax.json"), "rb") as file:
             annotations = json.load(file)
-        with open(cwd.joinpath("angiography/media/stenosis.json"), "rb") as file:
+        with open(cwd.joinpath("LearnAngiography/angiography/media/stenosis.json"), "rb") as file:
             stenosis_annotations = json.load(file)
         images_annotations = {str(image["id"]):{"file_path": files_urls["syntax"][image["file_name"]], "annotations": {str(annotation["category_id"]):annotation for annotation in annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in annotations["images"]}
         stenosis_images_annotations = {str(image["id"]):{"file_path": files_urls["stenosis"][image["file_name"]], "annotations": {str(annotation["category_id"]):annotation for annotation in stenosis_annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in stenosis_annotations["images"]}
