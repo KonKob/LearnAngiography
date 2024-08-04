@@ -16,24 +16,34 @@ def download_sample_data(destination_dir_path: str, dataset_url = 'https://zenod
 
 
 def load_data():
-    destination_dir_path = str(Path.cwd().parent)
+    cwd = Path.cwd()
+    destination_dir_path = str(cwd.parent)
     arcade_path = Path(destination_dir_path).joinpath("arcade/")
 
-    if not arcade_path.exists():
-        destination_dir_path = download_sample_data(destination_dir_path=destination_dir_path)
-    
-    syntax_path = arcade_path.joinpath("syntax/train/")
-    syntax_images_path = syntax_path.joinpath("images/")
-    stenosis_path = arcade_path.joinpath("stenosis/train/")
-    stenosis_images_path = stenosis_path.joinpath("images/")
-    
-    with open(syntax_path.joinpath("annotations/train.json"), "rb") as file:
-        annotations = json.load(file)
-    with open(stenosis_path.joinpath("annotations/train.json"), "rb") as file:
-        stenosis_annotations = json.load(file)
-    images_annotations = {str(image["id"]):{"file_path": syntax_images_path.joinpath(image["file_name"]), "annotations": {str(annotation["category_id"]):annotation for annotation in annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in annotations["images"]}
-    stenosis_images_annotations = {str(image["id"]):{"file_path": stenosis_images_path.joinpath(image["file_name"]), "annotations": {str(annotation["category_id"]):annotation for annotation in stenosis_annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in stenosis_annotations["images"]}
-    
+    if arcade_path.exists():
+        #destination_dir_path = download_sample_data(destination_dir_path=destination_dir_path)
+        files_urls_path = str(cwd.joinpath("angiography/media/files_urls_final.json"))
+        with open(files_urls_path, "r") as file:
+            files_urls = json.load(file)
+        with open(cwd.joinpath("angiography/media/syntax.json"), "rb") as file:
+            annotations = json.load(file)
+        with open(cwd.joinpath("angiography/media/stenosis.json"), "rb") as file:
+            stenosis_annotations = json.load(file)
+        images_annotations = {str(image["id"]):{"file_path": files_urls["syntax"][image["file_name"]], "annotations": {str(annotation["category_id"]):annotation for annotation in annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in annotations["images"]}
+        stenosis_images_annotations = {str(image["id"]):{"file_path": files_urls["stenosis"][image["file_name"]], "annotations": {str(annotation["category_id"]):annotation for annotation in stenosis_annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in stenosis_annotations["images"]}
+
+    else:
+        syntax_path = arcade_path.joinpath("syntax/train/")
+        syntax_images_path = syntax_path.joinpath("images/")
+        stenosis_path = arcade_path.joinpath("stenosis/train/")
+        stenosis_images_path = stenosis_path.joinpath("images/")
+        with open(syntax_path.joinpath("annotations/train.json"), "rb") as file:
+            annotations = json.load(file)
+        with open(stenosis_path.joinpath("annotations/train.json"), "rb") as file:
+            stenosis_annotations = json.load(file)
+        images_annotations = {str(image["id"]):{"file_path": syntax_images_path.joinpath(image["file_name"]), "annotations": {str(annotation["category_id"]):annotation for annotation in annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in annotations["images"]}
+        stenosis_images_annotations = {str(image["id"]):{"file_path": stenosis_images_path.joinpath(image["file_name"]), "annotations": {str(annotation["category_id"]):annotation for annotation in stenosis_annotations["annotations"] if image["id"]==annotation["image_id"]}} for image in stenosis_annotations["images"]}
+
     module_dict = {
         "Right or left": {"images": images_annotations, "syllable": RightOrLeftSyllable},
         "Choose artery name": {"images": images_annotations, "syllable": ChooseArteryNameSyllable},

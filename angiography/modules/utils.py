@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import imageio.v3 as iio
 from ..meta.segment_definitions import segment_definitions
 import random
@@ -34,9 +33,9 @@ def show_annotations_over_image(image, segment_ids="all", show_name: bool=True, 
             color = plot_style["foreground"]
         ax.plot(x, y, color=color)
         if show_name:
-          ax.text(np.mean(x), np.mean(y), segment_definitions.loc[segment_definitions["segment_id"]==segment_category, "segment_name"].values[0], color=plot_style["text-color"])
+          ax.text(sum(x)/len(x), sum(y)/len(y), segment_definitions.loc[segment_definitions["segment_id"]==segment_category, "segment_name"].values[0], color=plot_style["text-color"])
         if show_alias:
-          ax.text(np.mean(x), np.mean(y), i, color=plot_style["text-color"], fontsize=(size[0]*size[1])/2)
+          ax.text(sum(x)/len(x), sum(y)/len(y), i, color=plot_style["text-color"], fontsize=(size[0]*size[1])/2)
           
     ax.set_facecolor(plot_style["face-color"])
     fig.set_facecolor(plot_style["face-color"])

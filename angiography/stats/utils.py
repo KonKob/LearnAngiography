@@ -1,6 +1,5 @@
 from datetime import datetime
 import random
-import numpy as np
 
 
 class Score():
@@ -24,9 +23,9 @@ def adjust_to_stats(segment_ids, user_stats=None, module_stats=None, k=1):
         segment_means = []
         for stat in stats:
           if segment_id in stat:
-            segment_means.append(np.mean(stat[segment_id]))
+            segment_means.append(sum(stat[segment_id])/len(stat[segment_id]))
         if segment_means:
-          segment_mean = np.mean(segment_means)
+          segment_mean = sum(segment_means)/len(segment_means)
         if segment_mean > 0.9:
           segment_mean = 0.9
         if segment_mean < 0.1:
