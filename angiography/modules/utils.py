@@ -3,8 +3,9 @@ import imageio.v3 as iio
 from ..meta.segment_definitions import segment_definitions_dict
 import random
 from ..meta.styles import plot_style
+import numpy as np
 
-def show_annotations_over_image(image_data, image, segment_ids="all", show_name: bool=True, show_alias: bool=False, colors={}, point=None, size=(7, 4)):
+def show_annotations_over_image(image_data, image, segment_ids="all", show_name: bool=True, show_alias: bool=False, colors={}, point=None, size=(7, 4), return_data=False):
     fig, ax = plt.subplots(figsize=size)
     ax.imshow(image_data, cmap="Greys")
     if point is not None:
@@ -45,9 +46,16 @@ def show_annotations_over_image(image_data, image, segment_ids="all", show_name:
     ax.tick_params(axis='y', colors=plot_style["axis-color"])
     ax.spines['left'].set_color(plot_style["axis-color"])
     ax.spines['bottom'].set_color(plot_style["axis-color"])
-    display(fig) 
-    plt.close()
-    return segment_ids
+    if return_data:
+        fig.canvas.draw()
+        data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+        data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+        plt.close()
+        return data
+    else:
+        display(fig) 
+        plt.close()
+        return None
 
 
 def get_ids_names_explanations(segment_definitions_dict, id, name_parts=["segment_alphanumeric", "segment_name", "segment_description"]):

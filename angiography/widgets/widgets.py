@@ -3,7 +3,7 @@ from ..modules.modules import Module
 from ..meta.segment_definitions import segment_definitions_dict, segment_definitions_markdown
 from ..meta.module_pages import get_landing_pages
 from ..meta.utils import load_data
-from ..meta.styles import start_button_style, n_items_style, slider_style, select_style, return_button_style, markdown_style, text_corpus_style, text_header_style, background_style, widget_within_style, tab_style, theme_style, locate_slider_style
+from ..meta.styles import start_button_style, n_items_style, slider_style, select_style, return_button_style, markdown_style, text_corpus_style, text_header_style, background_style, widget_within_style, tab_style, theme_style, locate_slider_style, text_select_style
 import os
 from pathlib import Path
 import requests
@@ -59,7 +59,8 @@ def SelectModule(module_select, start_module, module_dict, n_syllables_reactive,
       max = 20
       with solara.Column(gap="2vw", style=slider_style):
           solara.Switch(label="Use syntax scores instead of full name", value=use_syntax_scores, disabled=module_select.value not in ["Choose artery name", "Locate artery"])
-          solara.SliderInt(f"Choose number of items (range {min} to {max})", value=n_syllables_reactive, min=min, max=max)
+          solara.Text(f"Choose number of items (range {min} to {max})", style=text_select_style)
+          solara.SliderInt("", value=n_syllables_reactive, min=min, max=max)
       solara.InputInt(f"Number of items: ", value=n_syllables_reactive, style=n_items_style)
     local_path = Path.cwd().joinpath("angiography/media/favicon.png")
     if local_path.exists():
@@ -68,6 +69,7 @@ def SelectModule(module_select, start_module, module_dict, n_syllables_reactive,
         image_path = "https://raw.githubusercontent.com/KonKob/LearnAngiography/main/angiography/media/favicon.png"
     solara.Image(image_path, width="30vw")
   solara.Button("Start", on_click=on_start_click, style=start_button_style)
+  solara.Text("", style=text_corpus_style)
   
 
 @solara.component
@@ -103,6 +105,7 @@ def LandingPage(m, ex_syll, start_module):
   def return_to_main():
     start_module.value = None
   solara.Button("Back to main menu", on_click=return_to_main, style=return_button_style)
+  solara.Text("", style=text_corpus_style)
 
 @solara.component
 def create_widgets(options, widget, value):  
@@ -120,7 +123,7 @@ def create_text_widget(options, widget, value):
 
 @solara.component
 def create_toggle_buttons_single(options, widget, value):
-  widget(value=value, values=options["options"], style=text_corpus_style)
+  widget(value=value, values=options["options"], style=text_corpus_style, dense=True)
 
 @solara.component
 def create_vboxes(options, widget, value):
@@ -144,7 +147,7 @@ widget_select_dict = {'react.component(solara.components.misc.Text)': create_tex
 def ModulePage(m, ex_syll, n_syllables):
   m.executed_syllables = ex_syll.value
   solara.Title(f"LearnAngiography {m.module_name}")
-  m.syllables[m.executed_syllables].start()
+  solara.Image(m.syllables[m.executed_syllables].start(return_data=True), width="75vw")
   solara.Text(m.syllables[m.executed_syllables].task_description, style=text_header_style)
   solara_dict = m.syllables[m.executed_syllables].solara_dict 
   answer_list = []
@@ -162,6 +165,7 @@ def ModulePage(m, ex_syll, n_syllables):
     ex_syll.value += 1 
   solara.Button("Next", on_click=next, style=start_button_style)
   solara.Text(f"{ex_syll.value+1}/{n_syllables}", style=text_corpus_style)
+  solara.Text("", style=text_corpus_style)
 
 
 @solara.component
@@ -181,11 +185,12 @@ def ResultsPage(m, start_module=None):
   with solara.Column(gap="4vw"):
     for syllable in m.syllables:
       with solara.Row(gap="2vw", style=background_style):
-        syllable.result()
+        solara.Image(syllable.result(return_data=True), width="45vw")
         with solara.Column(gap="0vw"):
           solara.Text(f"{syllable.task_description}", style=text_header_style)
           solara.Text(f"Your answer: {syllable.result_answer}", style=text_corpus_style)
           solara.Text(f"Correct answer: {syllable.result_solution}", style=text_corpus_style)
+  solara.Text("", style=text_corpus_style)
 
 
 @solara.component
@@ -216,7 +221,7 @@ def MetaPage():
 
   ## References
 
-  > [1] Popov, M., Amanturdieva, A., Zhaksylyk, N., Alkanov, A., Saniyazbekov, A., Aimyshev, T., Ismailov, E., Bulegenov, A., Kuzhukeyev, A., Kulanbayeva, A., Kalzhanov, A., Temenov, N., Kolesnikov, A., Sakhov, O., & Fazli, S. (2024). Dataset for Automatic Region-based Coronary Artery Disease Diagnostics Using X-Ray Angiography Images. Scientific data, 11(1), 20.
+  > [1] [Popov, M., Amanturdieva, A., Zhaksylyk, N., Alkanov, A., Saniyazbekov, A., Aimyshev, T., Ismailov, E., Bulegenov, A., Kuzhukeyev, A., Kulanbayeva, A., Kalzhanov, A., Temenov, N., Kolesnikov, A., Sakhov, O., & Fazli, S. (2024). Dataset for Automatic Region-based Coronary Artery Disease Diagnostics Using X-Ray Angiography Images. Scientific data, 11(1), 20.](https://doi.org/10.1038/s41597-023-02871-z)
 
   > [2] Sianos, G., Morel, M. A., Kappetein, A. P., Morice, M. C., Colombo, A., Dawkins, K., van den Brand, M., Van Dyck, N., Russell, M. E., Mohr, F. W., & Serruys, P. W. (2005). The SYNTAX Score: an angiographic tool grading the complexity of coronary artery disease. EuroIntervention : journal of EuroPCR in collaboration with the Working Group on Interventional Cardiology of the European Society of Cardiology, 1(2), 219–227.""",
   style = markdown_style)

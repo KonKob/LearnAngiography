@@ -25,7 +25,8 @@ return_button_style = {
                 }
 
 n_items_style = {
-    "width": "20vw", 
+    "width": "auto",
+    "height": "auto", 
     "background-color": "white",
     "font-family": "sans-serif",
     "color": "black",
@@ -36,7 +37,7 @@ n_items_style = {
     }
 
 slider_style = {
-    "width": "40vw",
+    "width": "auto",
     "background-color": "white",
     "font-family": "sans-serif",
     "color": "black",
@@ -47,20 +48,20 @@ slider_style = {
 }
 
 locate_slider_style = {
-    "width": "30vw",
+    "width": "40vw", 
     "position": "relative",
-    "left": "2vw"
+    "left": "18vw"
 }
 
 select_style = {
-    "width": "40vw",
-    "height": "7.5vw",
+    "width": "auto",
+    "height": "auto",
     "background-color": "white",
     "font-family": "sans-serif",
     "color": "black",
     "left": "0vw",
     "position": "relative",
-    "font-size": "1.25vw",
+    "font-size": "auto",
     "padding": "2vw 2vw",
 }
 
@@ -75,16 +76,27 @@ text_corpus_style = {
     "background-color": "white",
     "font-family": "sans-serif",
     "color": "black",
-    "font-size": "1vw",
+    "font-size": "auto",
     "padding": "0.5vw 1vw",
+    "width": "auto"
     }
 
 text_header_style = {
     "background-color": "white",
     "font-family": "sans-serif",
     "color": "black",
+    "font-size": "auto",
+    "padding": "0.5vw 1vw",
+    "width": "auto"
+}
+
+text_select_style = {
+    "background-color": "white",
+    "font-family": "sans-serif",
+    "color": "black",
     "font-size": "1.25vw",
     "padding": "0.5vw 1vw",
+    "width": "auto"
 }
 
 background_style = {
@@ -100,8 +112,8 @@ plot_style = {
 
 widget_within_style = {
     "outline-style": "solid",
-    "font-size": "1vw",
-    "width": "10vw",
+    "font-size": "auto",
+    "width": "30px",
     "position": "relative",
     "left": "1vw"
 }
