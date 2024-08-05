@@ -53,7 +53,7 @@ class ChooseArteryNameSyllable(Syllable):
     return 4
   
   def create_solara_dict(self):
-    return {"widgets": [solara.ToggleButtonsSingle, solara.VBox],
+    return {"widgets": [solara.ToggleButtonsSingle, solara.Column],
             "widget_options": [{"options": self.options}, {"text": [solara.Text for i in range(len(self.options))], "values": [f"i) {option} " for i, option in enumerate(self.options)], "tooltips": [solara.Tooltip for i in range(len(self.options))], "tooltip_descriptions": [self.get_ids_names_explanations(id, ["segment_description"]) for id in self.all_segment_ids]}],
             "answer_value": [solara.reactive(self.options[0]), None]}
   

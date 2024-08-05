@@ -3,12 +3,12 @@ from ..modules.modules import Module
 from ..meta.segment_definitions import segment_definitions_dict, segment_definitions_markdown
 from ..meta.module_pages import get_landing_pages
 from ..meta.utils import load_data
-from ..meta.styles import start_button_style, n_items_style, slider_style, select_style, return_button_style, markdown_style, text_corpus_style, text_header_style, background_style, widget_within_style, tab_style, theme_style, locate_slider_style, text_select_style
+from ..meta.styles import start_button_style, n_items_style, slider_style, select_style, return_button_style, markdown_style, text_corpus_style, text_header_style, background_style, widget_within_style, tab_style, theme_style, locate_slider_style, text_select_style, toggle_buttons_style
 import os
 from pathlib import Path
 import requests
 
-
+ 
 @solara.component
 def Page():
     set_theme()
@@ -123,14 +123,14 @@ def create_text_widget(options, widget, value):
 
 @solara.component
 def create_toggle_buttons_single(options, widget, value):
-  widget(value=value, values=options["options"], style=text_corpus_style, dense=True)
+  widget(value=value, values=options["options"], style=toggle_buttons_style, dense=True)
 
 @solara.component
-def create_vboxes(options, widget, value):
-  with widget():
+def create_columns(options, widget, value):
+  with widget(gap="2vw"):
     for text, value, tooltip, tooltip_description in zip(options["text"], options["values"], options["tooltips"], options["tooltip_descriptions"]):
       with tooltip(tooltip_description):
-        text(value)
+        text(value, style=widget_within_style)
 
 @solara.component
 def create_float_slider(options, widget, value):
@@ -141,7 +141,7 @@ widget_select_dict = {'react.component(solara.components.misc.Text)': create_tex
                       'react.component(solara.components.togglebuttons.ToggleButtonsSingle)': create_toggle_buttons_single,
                       'react.component(solara.components.slider.SliderFloat)': create_float_slider,
                       'react.component(solara.components.tooltip.Tooltip)': create_tooltip,
-                      'react.component(solara.components.misc.VBox)': create_vboxes}
+                      'react.component(solara.components.misc.Column)': create_columns}
 
 @solara.component
 def ModulePage(m, ex_syll, n_syllables):

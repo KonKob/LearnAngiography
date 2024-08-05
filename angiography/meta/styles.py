@@ -113,7 +113,7 @@ plot_style = {
 widget_within_style = {
     "outline-style": "solid",
     "font-size": "auto",
-    "width": "30px",
+    "width": "fit-content",
     "position": "relative",
     "left": "1vw"
 }
@@ -128,3 +128,12 @@ theme_style = {
     "primary": "#000000",
     "secondary": "#000000",
 }
+
+toggle_buttons_style = {
+    "background-color": "white",
+    "font-family": "sans-serif",
+    "color": "black",
+    "font-size": "auto",
+    "padding": "0.5vw 1vw",
+    "width": "100vw"
+    }
